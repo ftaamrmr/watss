@@ -132,6 +132,38 @@ Full walkthrough with screenshots:
 > (Vercel, Railway, your own VPS). Hostinger is recommended, not
 > required._
 
+## 🐳 Deploy on Coolify
+
+This repo now includes a production `Dockerfile` tailored for
+**Coolify**:
+
+- multi-stage build
+- Next.js `output: "standalone"` for a smaller runtime image
+- `HOSTNAME=0.0.0.0` and `PORT=3000` defaults
+- health check endpoint at **`/api/health`**
+
+### Coolify setup
+
+1. Create a new **Application** from your GitHub repo.
+2. Choose the repository **Dockerfile** build pack.
+3. Set these **Build Variables** in Coolify:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - `NEXT_PUBLIC_SITE_URL` (recommended)
+4. Set these **Environment Variables** in Coolify:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - `SUPABASE_SERVICE_ROLE_KEY`
+   - `ENCRYPTION_KEY`
+   - `META_APP_SECRET`
+   - any optional vars you use from `.env.local.example`
+5. Set the port to **3000**.
+6. Configure the health check path to **`/api/health`**.
+
+> Why both build and runtime vars for `NEXT_PUBLIC_*`? Next.js inlines
+> browser-visible env vars during `next build`, so Coolify must provide
+> them while building the image too.
+
 ## Documentation
 
 Full self-host documentation — Supabase migrations, WhatsApp Business

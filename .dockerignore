@@ -1,0 +1,10 @@
+.git
+.github
+.next
+node_modules
+npm-debug.log
+README.md
+docs
+supabase
+.env*
+!.env.local.example
