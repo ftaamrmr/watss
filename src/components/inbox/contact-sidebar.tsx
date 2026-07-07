@@ -3,19 +3,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { cn } from "@/lib/utils";
 import type { Contact, Deal, ContactNote, Tag } from "@/types";
-import {
-  Phone,
-  Mail,
-  Copy,
-  Check,
-  User,
-  Tag as TagIcon,
-  DollarSign,
-  StickyNote,
-  Plus,
-} from "lucide-react";
+import { Phone, Mail, Copy, Check, Tag as TagIcon, DollarSign, StickyNote, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { format } from "date-fns";
