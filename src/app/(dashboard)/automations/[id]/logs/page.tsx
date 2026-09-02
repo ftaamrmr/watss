@@ -21,11 +21,13 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { formatRelative } from "@/lib/automations/trigger-meta"
 
+import { T, useT } from "@/i18n/provider";
 export default function AutomationLogsPage({
   params,
 }: {
   params: Promise<{ id: string }>
 }) {
+  const { t } = useT();
   const { id } = use(params)
   const router = useRouter()
 
@@ -56,7 +58,7 @@ export default function AutomationLogsPage({
         setAutomation(autRes.data as Automation | null)
         setLogs((logRes.data ?? []) as AutomationLog[])
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load logs")
+        setError(err instanceof Error ? err.message: t("dashboard_automations_id_logs_page.006"))
       }
     }
     load()
@@ -66,9 +68,7 @@ export default function AutomationLogsPage({
     return (
       <div className="flex h-64 flex-col items-center justify-center gap-3">
         <p className="text-sm text-red-400">{error}</p>
-        <Button variant="outline" onClick={() => router.push("/automations")}>
-          Back
-        </Button>
+        <Button variant="outline" onClick={() => router.push("/automations")}><T k="dashboard_automations_id_logs_page.004" /></Button>
       </div>
     )
   }
@@ -88,22 +88,20 @@ export default function AutomationLogsPage({
           type="button"
           onClick={() => router.push("/automations")}
           className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-          aria-label="Back"
+          aria-label={t("dashboard_automations_id_logs_page.004")}
         >
           <ArrowLeft className="h-4 w-4" />
         </button>
         <div>
           <h1 className="text-2xl font-bold text-foreground">{automation.name}</h1>
-          <p className="mt-0.5 text-sm text-muted-foreground">Execution logs</p>
+          <p className="mt-0.5 text-sm text-muted-foreground"><T k="dashboard_automations_id_logs_page.001" /></p>
         </div>
       </div>
 
       {logs.length === 0 ? (
         <div className="flex h-48 flex-col items-center justify-center rounded-xl border border-dashed border-border bg-card/40">
-          <p className="text-sm text-foreground">No executions yet</p>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Trigger this automation to see runs here.
-          </p>
+          <p className="text-sm text-foreground"><T k="dashboard_automations_id_logs_page.002" /></p>
+          <p className="mt-1 text-xs text-muted-foreground"><T k="dashboard_automations_id_logs_page.005" /></p>
         </div>
       ) : (
         <ul className="space-y-2">
@@ -127,7 +125,7 @@ export default function AutomationLogsPage({
                   <StatusBadge status={log.status} />
                   <div className="min-w-0 flex-1">
                     <div className="truncate text-sm font-medium text-foreground">
-                      {log.contact?.name ?? log.contact?.phone ?? "Unknown contact"}
+                      {log.contact?.name ?? log.contact?.phone ?? t("dashboard_flows_id_runs_page.008")}
                     </div>
                     <div className="truncate text-xs text-muted-foreground">
                       {log.trigger_event} · {log.steps_executed?.length ?? 0} step
@@ -150,7 +148,7 @@ export default function AutomationLogsPage({
                         <StepRow key={i} result={r} />
                       ))}
                       {(log.steps_executed ?? []).length === 0 && (
-                        <li className="text-xs text-muted-foreground">No steps recorded.</li>
+                        <li className="text-xs text-muted-foreground"><T k="dashboard_automations_id_logs_page.003" /></li>
                       )}
                     </ul>
                   </div>
@@ -165,6 +163,7 @@ export default function AutomationLogsPage({
 }
 
 function StatusBadge({ status }: { status: AutomationLog["status"] }) {
+  const { t } = useT();
   const classes =
     status === "success"
       ? "border-primary/30 bg-primary/10 text-primary"
@@ -184,6 +183,7 @@ function StatusBadge({ status }: { status: AutomationLog["status"] }) {
 }
 
 function StepRow({ result }: { result: AutomationLogStepResult }) {
+  const { t } = useT();
   const ok = result.status === "success"
   return (
     <li className="flex items-start gap-2 text-xs">

@@ -75,6 +75,7 @@ import { InviteMemberDialog } from './invite-member-dialog';
 import { SettingsPanelHead } from './settings-panel-head';
 import { ROLE_META } from './role-meta';
 
+import { T, useT } from "@/i18n/provider";
 interface Member {
   user_id: string;
   full_name: string;
@@ -125,6 +126,7 @@ function fmtExpiresIn(iso: string): string {
 }
 
 export function MembersTab() {
+  const { t } = useT();
   const { user, canManageMembers } = useAuth();
   const { getPresence, getRow, now } = usePresence();
 
@@ -168,7 +170,7 @@ export function MembersTab() {
       }
     } catch (err) {
       console.error('[MembersTab] load error:', err);
-      toast.error('Could not reach the server');
+      toast.error(t("join_token_page.011"));
     } finally {
       setLoading(false);
     }
@@ -220,7 +222,7 @@ export function MembersTab() {
         ),
       );
       console.error('[MembersTab] role change error:', err);
-      toast.error('Could not reach the server');
+      toast.error(t("join_token_page.011"));
     } finally {
       setPendingMemberAction(null);
     }
@@ -246,7 +248,7 @@ export function MembersTab() {
       setRemovingMember(null);
     } catch (err) {
       console.error('[MembersTab] remove error:', err);
-      toast.error('Could not reach the server');
+      toast.error(t("join_token_page.011"));
     } finally {
       setPendingMemberAction(null);
     }
@@ -262,11 +264,11 @@ export function MembersTab() {
         toast.error(payload.error || 'Failed to revoke invitation');
         return;
       }
-      toast.success('Invitation revoked');
+      toast.success(t("settings_members_tab.008"));
       setInvitations((prev) => prev.filter((i) => i.id !== invite.id));
     } catch (err) {
       console.error('[MembersTab] revoke error:', err);
-      toast.error('Could not reach the server');
+      toast.error(t("join_token_page.011"));
     }
   }
 
@@ -281,14 +283,12 @@ export function MembersTab() {
   return (
     <section className="animate-in fade-in-50 space-y-6 duration-200">
       <SettingsPanelHead
-        title="Team members"
+        title={t("settings_members_tab.007")}
         description="People with access to this account. Roles control what each teammate can do."
         action={
           <RequireRole min="admin">
             <Button onClick={() => setInviteOpen(true)}>
-              <Plus className="size-4" />
-              Invite member
-            </Button>
+              <Plus className="size-4" /><T k="settings_members_tab.001" /></Button>
           </RequireRole>
         }
       />
@@ -384,9 +384,7 @@ export function MembersTab() {
                           {member.full_name || 'Unnamed'}
                         </span>
                         {isSelf && (
-                          <Badge className="bg-muted text-muted-foreground border-border text-[10px] uppercase tracking-wide">
-                            You
-                          </Badge>
+                          <Badge className="bg-muted text-muted-foreground border-border text-[10px] uppercase tracking-wide"><T k="inbox_message_thread.012" /></Badge>
                         )}
                       </div>
                       {member.email && (
@@ -476,9 +474,7 @@ export function MembersTab() {
         <div>
           <div className="mb-2 flex items-center gap-2">
             <UsersRound className="size-4 text-muted-foreground" />
-            <h3 className="text-sm font-semibold text-foreground">
-              Pending invitations
-            </h3>
+            <h3 className="text-sm font-semibold text-foreground"><T k="settings_members_tab.002" /></h3>
             <Badge className="bg-muted text-muted-foreground border-border">
               {invitations.length}
             </Badge>
@@ -500,11 +496,9 @@ export function MembersTab() {
             <Card>
               <CardContent className="flex flex-col items-center justify-center py-8 text-center">
                 <Mail className="size-6 text-muted-foreground" />
-                <p className="mt-2 text-sm text-muted-foreground">
-                  No pending invitations.
-                </p>
+                <p className="mt-2 text-sm text-muted-foreground"><T k="settings_members_tab.003" /></p>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  Click <span className="text-muted-foreground">Invite member</span>{' '}
+                  Click <span className="text-muted-foreground"><T k="settings_members_tab.001" /></span>{' '}
                   above to generate a shareable link.
                 </p>
               </CardContent>
@@ -548,9 +542,7 @@ export function MembersTab() {
                         onClick={() => handleRevoke(inv)}
                         className="border-red-500/40 bg-red-500/10 text-red-300 hover:bg-red-500/20 hover:border-red-500/60 hover:text-red-200"
                       >
-                        <MailX className="size-4" />
-                        Revoke
-                      </Button>
+                        <MailX className="size-4" /><T k="settings_members_tab.004" /></Button>
                     </li>
                     );
                   })}
@@ -576,9 +568,7 @@ export function MembersTab() {
         <DialogContent className="bg-popover border-border sm:max-w-sm">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-popover-foreground">
-              <AlertTriangle className="size-4 text-amber-400" />
-              Remove member
-            </DialogTitle>
+              <AlertTriangle className="size-4 text-amber-400" /><T k="settings_members_tab.005" /></DialogTitle>
             <DialogDescription className="text-muted-foreground">
               Remove{' '}
               <span className="font-medium text-muted-foreground">
@@ -594,9 +584,7 @@ export function MembersTab() {
               variant="outline"
               onClick={() => setRemovingMember(null)}
               className="border-border text-muted-foreground hover:bg-muted"
-            >
-              Cancel
-            </Button>
+            ><T k="dashboard_automations_page.009" /></Button>
             <Button
               onClick={handleRemove}
               disabled={!!pendingMemberAction}
@@ -604,9 +592,7 @@ export function MembersTab() {
             >
               {pendingMemberAction ? (
                 <>
-                  <Loader2 className="size-4 animate-spin" />
-                  Removing...
-                </>
+                  <Loader2 className="size-4 animate-spin" /><T k="settings_members_tab.006" /></>
               ) : (
                 'Remove member'
               )}

@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
+import { T, useT } from "@/i18n/provider";
 // Icon per notification type. Only one type exists today
 // (conversation_assigned) but this keeps future types a one-line add.
 const TYPE_ICON: Record<Notification["type"], typeof Bell> = {
@@ -18,6 +19,7 @@ const TYPE_ICON: Record<Notification["type"], typeof Bell> = {
 };
 
 export default function NotificationsPage() {
+  const { t } = useT();
   const router = useRouter();
   const { accountId } = useAuth();
   const [notifications, setNotifications] = useState<Notification[] | null>(
@@ -104,7 +106,7 @@ export default function NotificationsPage() {
         .eq("id", id)
         .is("read_at", null);
       if (updateErr) {
-        toast.error("Failed to mark notification as read");
+        toast.error(t("dashboard_notifications_page.005"));
         load();
       }
     },
@@ -137,7 +139,7 @@ export default function NotificationsPage() {
       .is("read_at", null);
     setMarkingAll(false);
     if (updateErr) {
-      toast.error("Failed to mark all as read");
+      toast.error(t("dashboard_notifications_page.006"));
       load();
     }
   }, [unreadIds.length, load]);
@@ -146,9 +148,7 @@ export default function NotificationsPage() {
     return (
       <div className="flex h-64 flex-col items-center justify-center gap-2">
         <p className="text-sm text-destructive">{error}</p>
-        <Button variant="outline" onClick={() => window.location.reload()}>
-          Retry
-        </Button>
+        <Button variant="outline" onClick={() => window.location.reload()}><T k="dashboard_automations_page.005" /></Button>
       </div>
     );
   }
@@ -165,10 +165,8 @@ export default function NotificationsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Notifications</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Conversations other teammates assign to you show up here.
-          </p>
+          <h1 className="text-2xl font-bold text-foreground"><T k="dashboard_notifications_page.001" /></h1>
+          <p className="mt-1 text-sm text-muted-foreground"><T k="dashboard_notifications_page.002" /></p>
         </div>
         <Button
           variant="outline"
@@ -190,9 +188,7 @@ export default function NotificationsPage() {
           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
             <Bell className="h-6 w-6 text-primary" />
           </div>
-          <p className="mt-3 text-sm font-medium text-foreground">
-            No notifications yet
-          </p>
+          <p className="mt-3 text-sm font-medium text-foreground"><T k="dashboard_notifications_page.003" /></p>
           <p className="mt-1 text-xs text-muted-foreground">
             You&apos;ll see an alert here when someone assigns you a
             conversation.
@@ -241,7 +237,7 @@ export default function NotificationsPage() {
                       </span>
                       {isUnread && (
                         <span
-                          aria-label="Unread"
+                          aria-label={t("dashboard_notifications_page.004")}
                           className="h-2 w-2 flex-shrink-0 rounded-full bg-primary"
                         />
                       )}

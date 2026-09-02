@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/select';
 import { ArrowLeft, ArrowRight, Eye, ImageIcon, Loader2 } from 'lucide-react';
 
+import { T, useT } from "@/i18n/provider";
 type VariableType = 'static' | 'field' | 'custom_field';
 
 interface VariableMapping {
@@ -76,6 +77,7 @@ export function Step3Personalize({
   onNext,
   onBack,
 }: Step3Props) {
+  const { t } = useT();
   const [customFields, setCustomFields] = useState<CustomField[]>([]);
   const [loadingFields, setLoadingFields] = useState(true);
   const [firstContact, setFirstContact] = useState<Contact | null>(null);
@@ -235,7 +237,7 @@ export function Step3Personalize({
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-lg font-semibold text-foreground">Personalize Message</h2>
+        <h2 className="text-lg font-semibold text-foreground"><T k="broadcasts_step3_personalize.001" /></h2>
         <p className="mt-1 text-sm text-muted-foreground">
           Map template variables to contact fields, custom fields, or static
           values.
@@ -246,14 +248,12 @@ export function Step3Personalize({
         <div className="rounded-xl border border-border bg-card/50 p-4">
           <div className="mb-3 flex items-center gap-2">
             <ImageIcon className="h-4 w-4 text-primary" />
-            <p className="text-sm font-medium text-foreground">Header media</p>
+            <p className="text-sm font-medium text-foreground"><T k="broadcasts_step3_personalize.002" /></p>
             <span className="inline-flex items-center rounded-md bg-primary/10 px-2 py-0.5 text-xs font-medium uppercase text-primary">
               {mediaHeaderType}
             </span>
           </div>
-          <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
-            Media URL
-          </label>
+          <label className="mb-1.5 block text-xs font-medium text-muted-foreground"><T k="broadcasts_step3_personalize.006" /></label>
           <Input
             type="url"
             value={headerMediaUrl}
@@ -277,7 +277,7 @@ export function Step3Personalize({
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={headerMediaUrl.trim()}
-                alt="Header preview"
+                alt={t("broadcasts_step3_personalize.015")}
                 className="mt-3 max-h-40 rounded-lg border border-border object-contain"
               />
             )}
@@ -293,12 +293,8 @@ export function Step3Personalize({
 
       {placeholders.length === 0 && !mediaHeaderType ? (
         <div className="rounded-xl border border-border bg-card/50 p-6 text-center">
-          <p className="text-sm text-muted-foreground">
-            This template has no variables to personalize.
-          </p>
-        </div>
-      ) : placeholders.length === 0 ? null : (
-        <div className="space-y-4">
+          <p className="text-sm text-muted-foreground"><T k="broadcasts_step3_personalize.007" /></p>
+        </div>) : placeholders.length === 0 ? null : (<div className="space-y-4">
           {placeholders.map((placeholder) => {
             const key = placeholder.replace(/^\{\{|\}\}$/g, '');
             const mapping = variables[key] ?? { type: 'static', value: '' };
@@ -316,9 +312,7 @@ export function Step3Personalize({
 
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <div>
-                    <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
-                      Mapping Type
-                    </label>
+                    <label className="mb-1.5 block text-xs font-medium text-muted-foreground"><T k="broadcasts_step3_personalize.009" /></label>
                     <Select
                       value={mapping.type}
                       onValueChange={(val) =>
@@ -332,11 +326,9 @@ export function Step3Personalize({
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent className="border-border bg-popover">
-                        <SelectItem value="static">Static Value</SelectItem>
-                        <SelectItem value="field">Contact Field</SelectItem>
-                        <SelectItem value="custom_field">
-                          Custom Field
-                        </SelectItem>
+                        <SelectItem value="static"><T k="broadcasts_step3_personalize.003" /></SelectItem>
+                        <SelectItem value="field"><T k="broadcasts_step3_personalize.004" /></SelectItem>
+                        <SelectItem value="custom_field"><T k="broadcasts_step3_personalize.010" /></SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -351,18 +343,16 @@ export function Step3Personalize({
                         onChange={(e) =>
                           updateVariable(key, { value: e.target.value })
                         }
-                        placeholder="Enter value..."
+                        placeholder={t("broadcasts_step3_personalize.013")}
                         className="border-border bg-muted text-foreground placeholder:text-muted-foreground"
-                      />
-                    ) : mapping.type === 'field' ? (
-                      <Select
+                      />) : mapping.type === 'field' ? (<Select
                         value={mapping.value || undefined}
                         onValueChange={(val) =>
                           updateVariable(key, { value: val || '' })
                         }
                       >
                         <SelectTrigger className="w-full border-border bg-muted text-foreground">
-                          <SelectValue placeholder="Select field..." />
+                          <SelectValue placeholder={t("broadcasts_step3_personalize.014")} />
                         </SelectTrigger>
                         <SelectContent className="border-border bg-popover">
                           {contactFields.map((field) => (
@@ -412,7 +402,7 @@ export function Step3Personalize({
       <div className="rounded-xl border border-border bg-card/50 p-4">
         <div className="mb-3 flex items-center gap-2">
           <Eye className="h-4 w-4 text-primary" />
-          <p className="text-sm font-medium text-foreground">Live Preview</p>
+          <p className="text-sm font-medium text-foreground"><T k="broadcasts_step3_personalize.005" /></p>
           <span className="text-xs text-muted-foreground">({previewLabel})</span>
           {loadingPreview && (
             <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
@@ -432,9 +422,7 @@ export function Step3Personalize({
           Map every placeholder before continuing — still missing{' '}
           <span className="font-mono font-semibold">
             {unmappedKeys.join(', ')}
-          </span>
-          . Otherwise those placeholders will ship to Meta as empty strings.
-        </div>
+          </span><T k="broadcasts_step3_personalize.012" /></div>
       )}
 
       <div className="flex items-center justify-between border-t border-border pt-4">
@@ -443,16 +431,12 @@ export function Step3Personalize({
           onClick={onBack}
           className="border-border text-muted-foreground"
         >
-          <ArrowLeft className="h-4 w-4" />
-          Back
-        </Button>
+          <ArrowLeft className="h-4 w-4" /><T k="dashboard_automations_id_logs_page.004" /></Button>
         <Button
           onClick={onNext}
           disabled={unmappedKeys.length > 0 || headerMediaError !== null}
           className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
-        >
-          Next
-          <ArrowRight className="h-4 w-4" />
+        ><T k="broadcasts_step1_choose_template.005" /><ArrowRight className="h-4 w-4" />
         </Button>
       </div>
     </div>

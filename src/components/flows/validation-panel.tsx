@@ -22,6 +22,7 @@ import { cn } from "@/lib/utils";
 import type { ValidationIssue } from "@/lib/flows/validate";
 import { useFlowEditor } from "./flow-editor-state";
 
+import { T } from "@/i18n/provider";
 export function ValidationPanel() {
   const { issues, requestFlash } = useFlowEditor();
 
@@ -31,9 +32,7 @@ export function ValidationPanel() {
     // bg-emerald-500/10 would bleed through ugly).
     return (
       <div className="flex items-center gap-2 rounded-lg border border-emerald-600/50 bg-background p-3 text-sm font-medium text-emerald-300">
-        <CircleCheck className="h-4 w-4 shrink-0" />
-        No issues. Ready to activate.
-      </div>
+        <CircleCheck className="h-4 w-4 shrink-0" /><T k="flows_validation_panel.001" /></div>
     );
   }
   const errors = issues.filter((i) => i.severity === "error");

@@ -6,6 +6,7 @@ import { MessageTemplate } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Loader2, FileText, ArrowRight } from 'lucide-react';
 
+import { T } from "@/i18n/provider";
 const categoryColors: Record<string, string> = {
   Marketing: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
   Utility: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
@@ -68,17 +69,15 @@ export function Step1ChooseTemplate({ selectedTemplate, onSelect, onNext, onBack
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-lg font-semibold text-foreground">Choose a Template</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Select an approved message template for your broadcast.
-        </p>
+        <h2 className="text-lg font-semibold text-foreground"><T k="broadcasts_step1_choose_template.001" /></h2>
+        <p className="mt-1 text-sm text-muted-foreground"><T k="broadcasts_step1_choose_template.004" /></p>
       </div>
 
       {templates.length === 0 ? (
         <div className="flex h-48 flex-col items-center justify-center rounded-xl border border-border bg-card/50">
           <FileText className="mb-2 h-8 w-8 text-muted-foreground" />
-          <p className="text-sm text-muted-foreground">No templates available.</p>
-          <p className="mt-1 text-xs text-muted-foreground">Create a template in Settings first.</p>
+          <p className="text-sm text-muted-foreground"><T k="broadcasts_step1_choose_template.002" /></p>
+          <p className="mt-1 text-xs text-muted-foreground"><T k="broadcasts_step1_choose_template.003" /></p>
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -118,16 +117,12 @@ export function Step1ChooseTemplate({ selectedTemplate, onSelect, onNext, onBack
       )}
 
       <div className="flex items-center justify-between border-t border-border pt-4">
-        <Button variant="outline" onClick={onBack} className="border-border text-muted-foreground">
-          Back
-        </Button>
+        <Button variant="outline" onClick={onBack} className="border-border text-muted-foreground"><T k="dashboard_automations_id_logs_page.004" /></Button>
         <Button
           onClick={onNext}
           disabled={!selectedTemplate}
           className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
-        >
-          Next
-          <ArrowRight className="h-4 w-4" />
+        ><T k="broadcasts_step1_choose_template.005" /><ArrowRight className="h-4 w-4" />
         </Button>
       </div>
     </div>

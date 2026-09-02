@@ -43,6 +43,7 @@ import { AUTOMATION_TEMPLATES, type TemplateSlug } from "@/lib/automations/templ
 import { triggerMeta, formatRelative } from "@/lib/automations/trigger-meta"
 import { cn } from "@/lib/utils"
 
+import { T, useT } from "@/i18n/provider";
 const TEMPLATE_ORDER: TemplateSlug[] = [
   "welcome_message",
   "out_of_office",
@@ -58,6 +59,7 @@ const TEMPLATE_ICON: Record<TemplateSlug, typeof Zap> = {
 }
 
 export default function AutomationsPage() {
+  const { t } = useT();
   const router = useRouter()
   const canCreate = useCan("send-messages")
   const [automations, setAutomations] = useState<Automation[] | null>(null)
@@ -75,7 +77,7 @@ export default function AutomationsPage() {
       if (fetchErr) throw fetchErr
       setAutomations((data ?? []) as Automation[])
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load automations")
+      setError(err instanceof Error ? err.message: t("dashboard_automations_page.016"))
     }
   }
 
@@ -99,7 +101,7 @@ export default function AutomationsPage() {
         prev?.map((x) => (x.id === a.id ? { ...x, is_active: !next } : x)) ?? prev,
       )
       const body = await res.json().catch(() => ({}))
-      toast.error(body?.error ?? "Failed to update")
+      toast.error(body?.error ?? t("dashboard_automations_page.019"))
       return
     }
     toast.success(next ? "Automation activated" : "Automation paused")
@@ -109,10 +111,10 @@ export default function AutomationsPage() {
     const res = await fetch(`/api/automations/${a.id}/duplicate`, { method: "POST" })
     if (!res.ok) {
       const body = await res.json().catch(() => ({}))
-      toast.error(body?.error ?? "Failed to duplicate")
+      toast.error(body?.error ?? t("dashboard_automations_page.020"))
       return
     }
-    toast.success("Automation duplicated")
+    toast.success(t("dashboard_automations_page.017"))
     load()
   }
 
@@ -123,10 +125,10 @@ export default function AutomationsPage() {
     setDeleting(false)
     if (!res.ok) {
       const body = await res.json().catch(() => ({}))
-      toast.error(body?.error ?? "Failed to delete")
+      toast.error(body?.error ?? t("dashboard_automations_page.021"))
       return
     }
-    toast.success("Automation deleted")
+    toast.success(t("dashboard_automations_page.018"))
     setPendingDelete(null)
     load()
   }
@@ -139,9 +141,7 @@ export default function AutomationsPage() {
     return (
       <div className="flex h-64 flex-col items-center justify-center gap-2">
         <p className="text-sm text-red-400">{error}</p>
-        <Button variant="outline" onClick={() => window.location.reload()}>
-          Retry
-        </Button>
+        <Button variant="outline" onClick={() => window.location.reload()}><T k="dashboard_automations_page.005" /></Button>
       </div>
     )
   }
@@ -160,10 +160,8 @@ export default function AutomationsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Automations</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Build workflows that react to WhatsApp® events automatically.
-          </p>
+          <h1 className="text-2xl font-bold text-foreground"><T k="dashboard_automations_page.001" /></h1>
+          <p className="mt-1 text-sm text-muted-foreground"><T k="dashboard_automations_page.006" /></p>
         </div>
         <GatedButton
           canAct={canCreate}
@@ -171,14 +169,12 @@ export default function AutomationsPage() {
           onClick={() => router.push("/automations/new")}
           className="bg-primary text-primary-foreground hover:bg-primary/90"
         >
-          <Plus className="h-4 w-4" />
-          Create Automation
-        </GatedButton>
+          <Plus className="h-4 w-4" /><T k="dashboard_automations_page.007" /></GatedButton>
       </div>
 
       {showTemplates && (
         <section>
-          <h2 className="mb-3 text-sm font-semibold text-muted-foreground">Quick-start templates</h2>
+          <h2 className="mb-3 text-sm font-semibold text-muted-foreground"><T k="dashboard_automations_page.002" /></h2>
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
             {TEMPLATE_ORDER.map((slug) => {
               const t = AUTOMATION_TEMPLATES[slug]
@@ -206,10 +202,8 @@ export default function AutomationsPage() {
           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
             <Zap className="h-6 w-6 text-primary" />
           </div>
-          <p className="mt-3 text-sm font-medium text-foreground">No automations yet</p>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Pick a template above or create one from scratch.
-          </p>
+          <p className="mt-3 text-sm font-medium text-foreground"><T k="dashboard_automations_page.003" /></p>
+          <p className="mt-1 text-xs text-muted-foreground"><T k="dashboard_automations_page.008" /></p>
         </div>
       ) : (
         <ul className="space-y-3">
@@ -230,7 +224,7 @@ export default function AutomationsPage() {
       <Dialog open={!!pendingDelete} onOpenChange={(v) => !v && setPendingDelete(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete automation</DialogTitle>
+            <DialogTitle><T k="dashboard_automations_page.004" /></DialogTitle>
             <DialogDescription>
               This permanently removes{" "}
               <span className="text-foreground">{pendingDelete?.name}</span> and its execution
@@ -242,9 +236,7 @@ export default function AutomationsPage() {
               variant="ghost"
               onClick={() => setPendingDelete(null)}
               disabled={deleting}
-            >
-              Cancel
-            </Button>
+            ><T k="dashboard_automations_page.009" /></Button>
             <Button
               variant="destructive"
               onClick={confirmDelete}
@@ -275,6 +267,7 @@ function AutomationCard({
   onLogs: () => void
   onDelete: () => void
 }) {
+  const { t } = useT();
   const meta = triggerMeta(automation.trigger_type)
   return (
     <li className="rounded-xl border border-border bg-card transition-colors hover:border-border">
@@ -296,7 +289,7 @@ function AutomationCard({
               {automation.name}
             </span>
             {automation.is_active && (
-              <span className="relative flex h-2 w-2" aria-label="active">
+              <span className="relative flex h-2 w-2" aria-label={t("dashboard_automations_page.014")}>
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
               </span>
@@ -331,29 +324,21 @@ function AutomationCard({
 
           <DropdownMenu>
             <DropdownMenuTrigger
-              aria-label="Open menu"
+              aria-label={t("dashboard_automations_page.015")}
               className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground data-[popup-open]:bg-muted"
             >
               <MoreVertical className="h-4 w-4" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem onClick={onEdit}>
-                <Pencil className="h-4 w-4" />
-                Edit
-              </DropdownMenuItem>
+                <Pencil className="h-4 w-4" /><T k="dashboard_automations_page.010" /></DropdownMenuItem>
               <DropdownMenuItem onClick={onDuplicate}>
-                <Copy className="h-4 w-4" />
-                Duplicate
-              </DropdownMenuItem>
+                <Copy className="h-4 w-4" /><T k="dashboard_automations_page.011" /></DropdownMenuItem>
               <DropdownMenuItem onClick={onLogs}>
-                <FileText className="h-4 w-4" />
-                View Logs
-              </DropdownMenuItem>
+                <FileText className="h-4 w-4" /><T k="dashboard_automations_page.012" /></DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem variant="destructive" onClick={onDelete}>
-                <Trash2 className="h-4 w-4" />
-                Delete
-              </DropdownMenuItem>
+                <Trash2 className="h-4 w-4" /><T k="dashboard_automations_page.013" /></DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

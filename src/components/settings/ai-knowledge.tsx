@@ -15,6 +15,7 @@ import {
   CardDescription,
 } from '@/components/ui/card';
 
+import { T, useT } from "@/i18n/provider";
 interface DocSummary {
   id: string;
   title: string;
@@ -33,6 +34,7 @@ export function AiKnowledgeCard({
   canEdit: boolean;
   hasEmbeddingsKey: boolean;
 }) {
+  const { t } = useT();
   const [docs, setDocs] = useState<DocSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<EditTarget>(null);
@@ -50,7 +52,7 @@ export function AiKnowledgeCard({
       if (res.ok) setDocs(data.documents ?? []);
       else toast.error(data.error ?? 'Failed to load knowledge base');
     } catch {
-      toast.error('Failed to load knowledge base');
+      toast.error(t("settings_ai_knowledge.006"));
     } finally {
       setLoading(false);
     }
@@ -80,7 +82,7 @@ export function AiKnowledgeCard({
       setTitle(data.title ?? '');
       setContent(data.content ?? '');
     } catch {
-      toast.error('Failed to open document');
+      toast.error(t("settings_ai_knowledge.007"));
     }
   };
 
@@ -92,7 +94,7 @@ export function AiKnowledgeCard({
 
   const save = async () => {
     if (!title.trim() || !content.trim()) {
-      toast.error('Title and content are required.');
+      toast.error(t("settings_ai_knowledge.008"));
       return;
     }
     setSaving(true);
@@ -117,7 +119,7 @@ export function AiKnowledgeCard({
         toast.error(data.error ?? 'Failed to save.');
       }
     } catch {
-      toast.error('Failed to save.');
+      toast.error(t("settings_ai_config.021"));
     } finally {
       setSaving(false);
     }
@@ -127,14 +129,14 @@ export function AiKnowledgeCard({
     try {
       const res = await fetch(`/api/ai/knowledge/${id}`, { method: 'DELETE' });
       if (res.ok) {
-        toast.success('Document removed.');
+        toast.success(t("settings_ai_knowledge.009"));
         setDocs((d) => d.filter((x) => x.id !== id));
       } else {
         const data = await res.json();
         toast.error(data.error ?? 'Failed to remove.');
       }
     } catch {
-      toast.error('Failed to remove.');
+      toast.error(t("settings_ai_config.023"));
     }
   };
 
@@ -144,12 +146,12 @@ export function AiKnowledgeCard({
       const res = await fetch('/api/ai/knowledge/reindex', { method: 'POST' });
       const data = await res.json();
       if (res.ok && data.success) {
-        toast.success(`Reindexed ${data.reindexed} document(s).`);
+        toast.success(t("settings_ai_knowledge.010", { count: data.reindexed }));
       } else {
         toast.error(data.error ?? 'Reindex failed.');
       }
     } catch {
-      toast.error('Reindex failed.');
+      toast.error(t("settings_ai_knowledge.011"));
     } finally {
       setReindexing(false);
     }
@@ -178,9 +180,7 @@ export function AiKnowledgeCard({
         ) : (
           <>
             {docs.length === 0 && editing === null && (
-              <p className="text-sm text-muted-foreground">
-                No documents yet.
-              </p>
+              <p className="text-sm text-muted-foreground"><T k="settings_ai_knowledge.002" /></p>
             )}
 
             {docs.length > 0 && (
@@ -200,7 +200,7 @@ export function AiKnowledgeCard({
                           size="sm"
                           className="h-8 w-8 p-0"
                           onClick={() => void openEdit(doc.id)}
-                          title="Edit"
+                          title={t("dashboard_automations_page.010")}
                         >
                           <Pencil className="h-4 w-4" />
                         </Button>
@@ -209,7 +209,7 @@ export function AiKnowledgeCard({
                           size="sm"
                           className="h-8 w-8 p-0 text-destructive hover:text-destructive"
                           onClick={() => void remove(doc.id)}
-                          title="Delete"
+                          title={t("dashboard_automations_page.013")}
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
@@ -223,30 +223,28 @@ export function AiKnowledgeCard({
             {editing !== null ? (
               <div className="space-y-3 rounded-md border border-border p-3">
                 <div className="space-y-2">
-                  <Label htmlFor="kb-title">Title</Label>
+                  <Label htmlFor="kb-title"><T k="automations_automation_builder.045" /></Label>
                   <Input
                     id="kb-title"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    placeholder="e.g. Returns & refunds policy"
+                    placeholder={t("settings_ai_knowledge.003")}
                     disabled={saving}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="kb-content">Content</Label>
+                  <Label htmlFor="kb-content"><T k="settings_ai_knowledge.001" /></Label>
                   <Textarea
                     id="kb-content"
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
-                    placeholder="Paste the FAQ answer, policy text, or product details…"
+                    placeholder={t("settings_ai_knowledge.004")}
                     rows={8}
                     disabled={saving}
                   />
                 </div>
                 <div className="flex justify-end gap-2">
-                  <Button variant="ghost" onClick={cancelEdit} disabled={saving}>
-                    Cancel
-                  </Button>
+                  <Button variant="ghost" onClick={cancelEdit} disabled={saving}><T k="dashboard_automations_page.009" /></Button>
                   <Button onClick={save} disabled={saving}>
                     {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                     Save document
@@ -265,7 +263,7 @@ export function AiKnowledgeCard({
                       size="sm"
                       onClick={reindex}
                       disabled={reindexing}
-                      title="Re-embed all documents (e.g. after adding an embeddings key)"
+                      title={t("settings_ai_knowledge.005")}
                     >
                       {reindexing ? (
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />

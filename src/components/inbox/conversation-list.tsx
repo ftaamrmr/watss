@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
+import { T, useT } from "@/i18n/provider";
 interface ConversationListProps {
   activeConversationId: string | null;
   onSelect: (conversation: Conversation) => void;
@@ -44,11 +45,11 @@ const STATUS_COLORS: Record<ConversationStatus, string> = {
 type InboxFilter = ConversationStatus | "all" | "unread";
 
 const FILTER_OPTIONS: { label: string; value: InboxFilter }[] = [
-  { label: "All", value: "all" },
-  { label: "Unread", value: "unread" },
-  { label: "Open", value: "open" },
-  { label: "Pending", value: "pending" },
-  { label: "Closed", value: "closed" },
+  { label: "inbox_conversation_list.005", value: "all" },
+  { label: "dashboard_notifications_page.004", value: "unread" },
+  { label: "inbox_conversation_list.006", value: "open" },
+  { label: "inbox_conversation_list.007", value: "pending" },
+  { label: "inbox_conversation_list.008", value: "closed" },
 ];
 
 export function ConversationList({
@@ -58,6 +59,7 @@ export function ConversationList({
   onConversationsLoaded,
   resyncToken = 0,
 }: ConversationListProps) {
+  const { t } = useT();
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<InboxFilter>("all");
   const [loading, setLoading] = useState(true);
@@ -226,7 +228,7 @@ export function ConversationList({
           <Input
             value={search}
             onChange={handleSearchChange}
-            placeholder="Search conversations..."
+            placeholder={t("inbox_conversation_list.004")}
             className="border-border bg-muted pl-9 text-sm text-foreground placeholder-muted-foreground focus:border-primary/50"
           />
         </div>
@@ -252,7 +254,7 @@ export function ConversationList({
                       : "text-popover-foreground"
                   )}
                 >
-                  {opt.label}
+                  {t(opt.label)}
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
@@ -325,9 +327,7 @@ export function ConversationList({
                       ? "text-primary"
                       : "text-popover-foreground"
                   )}
-                >
-                  All companies
-                </DropdownMenuItem>
+                ><T k="inbox_conversation_list.002" /></DropdownMenuItem>
                 {companies.map((co) => (
                   <DropdownMenuItem
                     key={co}
@@ -378,9 +378,7 @@ export function ConversationList({
             <button
               onClick={clearContactFilters}
               className="px-1 text-[11px] text-muted-foreground hover:text-foreground"
-            >
-              Clear all
-            </button>
+            ><T k="dashboard_contacts_page.012" /></button>
           </div>
         )}
       </div>
@@ -395,10 +393,8 @@ export function ConversationList({
         {loading ? (
           <div className="flex items-center justify-center py-12">
             <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-          </div>
-        ) : filtered.length === 0 ? (
-          <div className="px-4 py-12 text-center">
-            <p className="text-sm text-muted-foreground">No conversations found</p>
+          </div>) : filtered.length === 0 ? (<div className="px-4 py-12 text-center">
+            <p className="text-sm text-muted-foreground"><T k="inbox_conversation_list.001" /></p>
           </div>
         ) : (
           <div className="flex flex-col">
@@ -428,6 +424,7 @@ function ConversationItem({
   isActive,
   onSelect,
 }: ConversationItemProps) {
+  const { t } = useT();
   const contact = conversation.contact;
   const displayName = contact?.name || contact?.phone || "Unknown";
   const initials = displayName.charAt(0).toUpperCase();

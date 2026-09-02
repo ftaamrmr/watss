@@ -34,9 +34,11 @@ import { PipelineDonut } from '@/components/dashboard/pipeline-donut'
 import { ResponseTimeChart } from '@/components/dashboard/response-time-chart'
 import { ActivityFeed } from '@/components/dashboard/activity-feed'
 
+import { T, useT } from "@/i18n/provider";
 type RangeDays = 7 | 30 | 90
 
 export default function DashboardPage() {
+  const { t } = useT();
   const { defaultCurrency } = useAuth()
   const [metrics, setMetrics] = useState<MetricsBundle | null>(null)
   const [metricsLoading, setMetricsLoading] = useState(true)
@@ -122,10 +124,8 @@ export default function DashboardPage() {
     <div className="space-y-5">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Live analytics across conversations, contacts, deals, broadcasts, and automations.
-        </p>
+        <h1 className="text-2xl font-bold text-foreground"><T k="dashboard_dashboard_page.001" /></h1>
+        <p className="mt-1 text-sm text-muted-foreground"><T k="dashboard_dashboard_page.002" /></p>
       </div>
 
       {/* Metric cards */}
@@ -135,7 +135,7 @@ export default function DashboardPage() {
         ) : (
           <>
             <MetricCard
-              title="Active Conversations"
+              title={t("dashboard_dashboard_page.003")}
               value={metrics.activeConversations.current.toLocaleString()}
               icon={MessageSquare}
               delta={{
@@ -144,7 +144,7 @@ export default function DashboardPage() {
               }}
             />
             <MetricCard
-              title="New Contacts Today"
+              title={t("dashboard_dashboard_page.004")}
               value={metrics.newContactsToday.current.toLocaleString()}
               icon={UserPlus}
               delta={{
@@ -157,13 +157,13 @@ export default function DashboardPage() {
               }}
             />
             <MetricCard
-              title="Open Deals Value"
+              title={t("dashboard_dashboard_page.005")}
               value={formatCurrency(metrics.openDealsValue, defaultCurrency)}
               icon={DollarSign}
               subtitle={`${metrics.openDealsCount} open deal${metrics.openDealsCount === 1 ? '' : 's'}`}
             />
             <MetricCard
-              title="Messages Sent Today"
+              title={t("dashboard_dashboard_page.006")}
               value={metrics.messagesSentToday.current.toLocaleString()}
               icon={Send}
               delta={{
@@ -184,7 +184,8 @@ export default function DashboardPage() {
 
       {/* Charts row */}
       {/* items-stretch (the grid default) stretches the two columns to
-          match the tallest sibling; adding h-full on each wrapper and
+          match the tallest sibling;
+ adding h-full on each wrapper and
           on the inner panels makes both cards actually fill that
           stretched height so their rounded borders line up. Without
           this, the pipeline card rendered at its natural (shorter)

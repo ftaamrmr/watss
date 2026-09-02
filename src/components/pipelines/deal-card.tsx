@@ -4,6 +4,7 @@ import type { Deal, PipelineStage } from "@/types";
 import { Calendar, Check, X } from "lucide-react";
 import { formatCurrency } from "@/lib/currency";
 
+import { T } from "@/i18n/provider";
 interface DealCardProps {
   deal: Deal;
   stage: PipelineStage | null;
@@ -58,15 +59,11 @@ export function DealCard({ deal, stage, onEdit, isOverlay }: DealCardProps) {
         </h4>
         {deal.status === "won" && (
           <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-semibold text-primary">
-            <Check className="h-3 w-3" />
-            Won
-          </span>
+            <Check className="h-3 w-3" /><T k="dashboard_pipelines_page.015" /></span>
         )}
         {deal.status === "lost" && (
           <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-red-500/15 px-2 py-0.5 text-[10px] font-semibold text-red-400">
-            <X className="h-3 w-3" />
-            Lost
-          </span>
+            <X className="h-3 w-3" /><T k="pipelines_deal_card.001" /></span>
         )}
       </div>
 

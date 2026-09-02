@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/popover";
 import type { Message } from "@/types";
 
+import { useT } from "@/i18n/provider";
 // WhatsApp's own quick-reaction bar starts with these six. Picking the same
 // set keeps the affordance familiar without pulling in a 300KB emoji library.
 const QUICK_EMOJIS = ["👍", "❤️", "😂", "😮", "😢", "🙏"];
@@ -33,6 +34,7 @@ export function MessageActions({
   onReact,
   children,
 }: MessageActionsProps) {
+  const { t } = useT();
   // Touch devices have no hover. Long-press fires `contextmenu`; we capture
   // it, suppress the native menu, and pin the toolbar open until the user
   // interacts elsewhere.
@@ -50,14 +52,14 @@ export function MessageActions({
   const handleCopy = async () => {
     const text = message.content_text ?? "";
     if (!text) {
-      toast.error("Nothing to copy");
+      toast.error(t("inbox_message_actions.004"));
       return;
     }
     try {
       await navigator.clipboard.writeText(text);
-      toast.success("Copied");
+      toast.success(t("inbox_message_actions.005"));
     } catch {
-      toast.error("Copy failed");
+      toast.error(t("inbox_message_actions.006"));
     }
     setTouchOpen(false);
   };
@@ -104,7 +106,7 @@ export function MessageActions({
         <Popover open={pickerOpen} onOpenChange={setPickerOpen}>
           <PopoverTrigger
             className="flex h-5 w-5 items-center justify-center rounded-full text-popover-foreground hover:bg-muted hover:text-foreground"
-            aria-label="React"
+            aria-label={t("inbox_message_actions.001")}
           >
             <SmilePlus className="h-3.5 w-3.5" />
           </PopoverTrigger>
@@ -129,7 +131,7 @@ export function MessageActions({
           type="button"
           onClick={handleReply}
           className="flex h-5 w-5 items-center justify-center rounded-full text-popover-foreground hover:bg-muted hover:text-foreground"
-          aria-label="Reply"
+          aria-label={t("inbox_message_actions.002")}
         >
           <CornerUpLeft className="h-3.5 w-3.5" />
         </button>
@@ -137,7 +139,7 @@ export function MessageActions({
           type="button"
           onClick={handleCopy}
           className="flex h-5 w-5 items-center justify-center rounded-full text-popover-foreground hover:bg-muted hover:text-foreground"
-          aria-label="Copy"
+          aria-label={t("inbox_message_actions.003")}
         >
           <Copy className="h-3.5 w-3.5" />
         </button>

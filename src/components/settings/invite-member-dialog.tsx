@@ -38,6 +38,7 @@ import {
 } from '@/components/ui/select';
 import { useAuth } from '@/hooks/use-auth';
 
+import { T, useT } from "@/i18n/provider";
 type InviteRole = 'admin' | 'agent' | 'viewer';
 
 interface InviteMemberDialogProps {
@@ -81,6 +82,7 @@ export function InviteMemberDialog({
   onOpenChange,
   onCreated,
 }: InviteMemberDialogProps) {
+  const { t } = useT();
   const { account } = useAuth();
   const [role, setRole] = useState<InviteRole>('agent');
   const [expiry, setExpiry] = useState<string>('7');
@@ -105,7 +107,7 @@ export function InviteMemberDialog({
     // net for that path.
     const trimmedLabel = label.trim();
     if (trimmedLabel.length > MAX_LABEL_LEN) {
-      toast.error(`Label must be ${MAX_LABEL_LEN} characters or fewer`);
+      toast.error(t("settings_invite_member_dialog.010", { MAX_LABEL_LEN: MAX_LABEL_LEN }));
       return;
     }
     setSubmitting(true);
@@ -145,7 +147,7 @@ export function InviteMemberDialog({
       onCreated();
     } catch (err) {
       console.error('[InviteMemberDialog] create error:', err);
-      toast.error('Could not reach the server. Try again?');
+      toast.error(t("settings_invite_member_dialog.011"));
     } finally {
       setSubmitting(false);
     }
@@ -155,12 +157,12 @@ export function InviteMemberDialog({
     if (!result) return;
     try {
       await navigator.clipboard.writeText(result.url);
-      toast.success('Invite link copied');
+      toast.success(t("settings_invite_member_dialog.012"));
     } catch {
       // Most likely "not in a secure context" — happens on http://
       // local IPs. Surface the link in the toast so the admin can
       // hand-copy it.
-      toast.error('Clipboard blocked — copy the link manually');
+      toast.error(t("settings_invite_member_dialog.013"));
     }
   }
 
@@ -190,9 +192,7 @@ export function InviteMemberDialog({
           <>
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2 text-popover-foreground">
-                <Sparkles className="size-4 text-primary" />
-                Invite created
-              </DialogTitle>
+                <Sparkles className="size-4 text-primary" /><T k="settings_invite_member_dialog.005" /></DialogTitle>
               <DialogDescription className="text-muted-foreground">
                 Share this link with your new teammate. They&apos;ll be able
                 to sign up (or sign in) and join the account as{' '}
@@ -206,7 +206,7 @@ export function InviteMemberDialog({
             </DialogHeader>
 
             <div className="space-y-3 py-2">
-              <Label className="text-muted-foreground">Invite link</Label>
+              <Label className="text-muted-foreground"><T k="settings_invite_member_dialog.001" /></Label>
               <div className="flex gap-2">
                 <Input
                   readOnly
@@ -219,9 +219,7 @@ export function InviteMemberDialog({
                   onClick={copyToClipboard}
                   className="bg-primary hover:bg-primary/90 text-primary-foreground shrink-0"
                 >
-                  <Copy className="size-4" />
-                  Copy
-                </Button>
+                  <Copy className="size-4" /><T k="inbox_message_actions.003" /></Button>
               </div>
 
               {/* Higher-contrast amber than the original 10% / amber-200.
@@ -230,9 +228,7 @@ export function InviteMemberDialog({
                   /15, foreground promoted to amber-100 for the strong
                   intro, amber-200 for the body. */}
               <div className="rounded-md border border-amber-500/50 bg-amber-500/15 px-3 py-2 text-xs text-amber-200">
-                <strong className="font-semibold text-amber-100">
-                  Save this link now.
-                </strong>{' '}
+                <strong className="font-semibold text-amber-100"><T k="settings_invite_member_dialog.006" /></strong>{' '}
                 We never store the plaintext — once you close this dialog
                 the URL is gone. To re-share, revoke this invite and create
                 a new one.
@@ -253,24 +249,20 @@ export function InviteMemberDialog({
                     'w-full border-border text-muted-foreground hover:bg-muted',
                 })}
               >
-                <MessageCircle className="size-4" />
-                Send via WhatsApp
-              </a>
+                <MessageCircle className="size-4" /><T k="settings_invite_member_dialog.007" /></a>
             </div>
 
             <DialogFooter className="bg-popover border-border">
               <Button
                 onClick={() => onOpenChange(false)}
                 className="bg-primary hover:bg-primary/90 text-primary-foreground"
-              >
-                Done
-              </Button>
+              ><T k="settings_api_keys_settings.013" /></Button>
             </DialogFooter>
           </>
         ) : (
           <>
             <DialogHeader>
-              <DialogTitle className="text-popover-foreground">Invite a teammate</DialogTitle>
+              <DialogTitle className="text-popover-foreground"><T k="settings_invite_member_dialog.002" /></DialogTitle>
               <DialogDescription className="text-muted-foreground">
                 Generate a one-time invite link. Share it via WhatsApp,
                 Slack, or any channel you like — no email service required.
@@ -279,7 +271,7 @@ export function InviteMemberDialog({
 
             <div className="space-y-4 py-2">
               <div className="space-y-2">
-                <Label className="text-muted-foreground">Role</Label>
+                <Label className="text-muted-foreground"><T k="settings_invite_member_dialog.003" /></Label>
                 <Select
                   value={role}
                   onValueChange={(v) => v && setRole(v as InviteRole)}
@@ -288,9 +280,9 @@ export function InviteMemberDialog({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="admin">Admin</SelectItem>
-                    <SelectItem value="agent">Agent</SelectItem>
-                    <SelectItem value="viewer">Viewer</SelectItem>
+                    <SelectItem value="admin"><T k="layout_sidebar.006" /></SelectItem>
+                    <SelectItem value="agent"><T k="automations_automation_builder.042" /></SelectItem>
+                    <SelectItem value="viewer"><T k="layout_sidebar.007" /></SelectItem>
                   </SelectContent>
                 </Select>
                 <p className="text-xs text-muted-foreground">
@@ -299,7 +291,7 @@ export function InviteMemberDialog({
               </div>
 
               <div className="space-y-2">
-                <Label className="text-muted-foreground">Link valid for</Label>
+                <Label className="text-muted-foreground"><T k="settings_invite_member_dialog.004" /></Label>
                 <Select
                   value={expiry}
                   onValueChange={(v) => v && setExpiry(v)}
@@ -320,10 +312,10 @@ export function InviteMemberDialog({
               <div className="space-y-2">
                 <Label className="text-muted-foreground">
                   Label{' '}
-                  <span className="text-xs text-muted-foreground">(optional)</span>
+                  <span className="text-xs text-muted-foreground"><T k="broadcasts_step2_select_audience.005" /></span>
                 </Label>
                 <Input
-                  placeholder="e.g. Sara — support team"
+                  placeholder={t("settings_invite_member_dialog.009")}
                   value={label}
                   onChange={(e) => setLabel(e.target.value)}
                   maxLength={MAX_LABEL_LEN}
@@ -341,9 +333,7 @@ export function InviteMemberDialog({
                 variant="outline"
                 onClick={() => onOpenChange(false)}
                 className="border-border text-muted-foreground hover:bg-muted"
-              >
-                Cancel
-              </Button>
+              ><T k="dashboard_automations_page.009" /></Button>
               <Button
                 onClick={handleCreate}
                 disabled={submitting}
@@ -351,9 +341,7 @@ export function InviteMemberDialog({
               >
                 {submitting ? (
                   <>
-                    <Loader2 className="size-4 animate-spin" />
-                    Creating...
-                  </>
+                    <Loader2 className="size-4 animate-spin" /><T k="settings_invite_member_dialog.008" /></>
                 ) : (
                   'Generate link'
                 )}

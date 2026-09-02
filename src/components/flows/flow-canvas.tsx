@@ -95,6 +95,7 @@ import {
 import { useFlowEditor } from './flow-editor-state';
 import { NodeConfigForm } from './forms/node-config-form';
 
+import { T, useT } from "@/i18n/provider";
 // React-Flow node `data` payload — the bits our custom renderer needs.
 interface NodeData extends Record<string, unknown> {
   node: BuilderNode;
@@ -131,6 +132,7 @@ function slotColor(nodeType: NodeType, slotId: string, fallback: string) {
 }
 
 function FlowNodeCard({ data, selected }: NodeProps) {
+  const { t } = useT();
   const { node, isEntry, isFlashed } = data as NodeData;
   const meta = NODE_META[node.node_type];
   const c = nodeColors(node.node_type);
@@ -193,9 +195,7 @@ function FlowNodeCard({ data, selected }: NodeProps) {
           {meta.label}
         </span>
         {isEntry && (
-          <span className="border-border text-muted-foreground ml-auto rounded border px-1.5 py-0.5 text-[8.5px] font-bold tracking-[0.1em] uppercase">
-            Entry
-          </span>
+          <span className="border-border text-muted-foreground ml-auto rounded border px-1.5 py-0.5 text-[8.5px] font-bold tracking-[0.1em] uppercase"><T k="flows_flow_builder.010" /></span>
         )}
       </div>
       <div className="text-muted-foreground mt-2 truncate font-mono text-[11px]">
@@ -261,6 +261,7 @@ const NODE_TYPES = { flow: FlowNodeCard };
  * useReactFlow() must be called inside a ReactFlowProvider.
  */
 export function FlowCanvas() {
+  const { t } = useT();
   return (
     <ReactFlowProvider>
       <FlowCanvasInner />
@@ -269,6 +270,7 @@ export function FlowCanvas() {
 }
 
 function FlowCanvasInner() {
+  const { t } = useT();
   const {
     state,
     setState,
@@ -507,7 +509,7 @@ function FlowCanvasInner() {
   if (rfNodes.length === 0) {
     return (
       <div className="text-muted-foreground flex h-full flex-col items-center justify-center gap-3 text-sm">
-        <p>No nodes yet.</p>
+        <p><T k="flows_flow_canvas.001" /></p>
         <CanvasAddNodeButton />
       </div>
     );
@@ -629,9 +631,7 @@ function NodeEditSheet({
             <SheetTitle className="flex items-center gap-2 text-[11px] font-semibold tracking-wider uppercase">
               <span style={{ color: c.text }}>{meta.label}</span>
               {isEntry && (
-                <span className="rounded bg-emerald-500/15 px-1.5 py-0.5 text-[9px] font-semibold tracking-wider text-emerald-300 uppercase">
-                  Entry
-                </span>
+                <span className="rounded bg-emerald-500/15 px-1.5 py-0.5 text-[9px] font-semibold tracking-wider text-emerald-300 uppercase"><T k="flows_flow_builder.010" /></span>
               )}
             </SheetTitle>
             <SheetDescription className="text-muted-foreground mt-0.5 text-xs">
@@ -654,9 +654,7 @@ function NodeEditSheet({
 
         <SheetFooter className="border-border border-t px-5 py-3 sm:flex-row sm:justify-between">
           {!isEntry ? (
-            <Button variant="ghost" size="sm" onClick={onSetEntry}>
-              Set as entry
-            </Button>
+            <Button variant="ghost" size="sm" onClick={onSetEntry}><T k="flows_flow_builder.011" /></Button>
           ) : (
             <span />
           )}
@@ -666,9 +664,7 @@ function NodeEditSheet({
             onClick={onDelete}
             className="text-red-400 hover:bg-red-500/10 hover:text-red-300"
           >
-            <Trash2 className="h-3.5 w-3.5" />
-            Delete node
-          </Button>
+            <Trash2 className="h-3.5 w-3.5" /><T k="flows_flow_canvas.002" /></Button>
         </SheetFooter>
       </SheetContent>
     </Sheet>
@@ -696,6 +692,7 @@ const ADD_NODE_TYPES: NodeType[] = [
 ];
 
 function CanvasAddNodeButton() {
+  const { t } = useT();
   const reactFlow = useReactFlow();
   const { addNode, updateNodePosition } = useFlowEditor();
 
@@ -727,11 +724,9 @@ function CanvasAddNodeButton() {
     <DropdownMenu>
       <DropdownMenuTrigger
         className="bg-primary text-primary-foreground hover:bg-primary-hover inline-flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-[13px] font-medium shadow-[0_6px_20px_-8px_rgba(0,0,0,0.5)] transition-colors"
-        aria-label="Add node"
+        aria-label={t("flows_flow_builder.014")}
       >
-        <Plus className="h-4 w-4" />
-        Add node
-      </DropdownMenuTrigger>
+        <Plus className="h-4 w-4" /><T k="flows_flow_builder.014" /></DropdownMenuTrigger>
       <DropdownMenuContent
         align="start"
         className="border-border bg-popover w-[268px] p-1.5"

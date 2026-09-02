@@ -40,6 +40,7 @@ import {
   LayoutTemplate,
 } from 'lucide-react';
 
+import { T, useT } from "@/i18n/provider";
 interface ContactDetailViewProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -53,6 +54,7 @@ export function ContactDetailView({
   contactId,
   onUpdated,
 }: ContactDetailViewProps) {
+  const { t } = useT();
   const supabase = createClient();
   const { accountId, defaultCurrency } = useAuth();
 
@@ -196,7 +198,7 @@ export function ContactDetailView({
 
   async function saveDetails() {
     if (!contactId || !editPhone.trim()) {
-      toast.error('Phone number is required');
+      toast.error(t("contacts_contact_detail_view.014"));
       return;
     }
 
@@ -213,9 +215,9 @@ export function ContactDetailView({
       .eq('id', contactId);
 
     if (error) {
-      toast.error('Failed to update contact');
+      toast.error(t("contacts_contact_detail_view.015"));
     } else {
-      toast.success('Contact updated');
+      toast.success(t("contacts_contact_detail_view.016"));
       fetchContact();
       onUpdated();
     }
@@ -259,7 +261,7 @@ export function ContactDetailView({
     } = await supabase.auth.getSession();
     const user = session?.user;
     if (!user || !accountId) {
-      toast.error('Not authenticated');
+      toast.error(t("contacts_contact_detail_view.017"));
       setSavingNote(false);
       return;
     }
@@ -272,11 +274,11 @@ export function ContactDetailView({
     });
 
     if (error) {
-      toast.error('Failed to add note');
+      toast.error(t("contacts_contact_detail_view.018"));
     } else {
       setNewNote('');
       fetchNotes();
-      toast.success('Note added');
+      toast.success(t("contacts_contact_detail_view.019"));
     }
     setSavingNote(false);
   }
@@ -288,10 +290,10 @@ export function ContactDetailView({
       .eq('id', noteId);
 
     if (error) {
-      toast.error('Failed to delete note');
+      toast.error(t("contacts_contact_detail_view.020"));
     } else {
       setNotes((prev) => prev.filter((n) => n.id !== noteId));
-      toast.success('Note deleted');
+      toast.success(t("contacts_contact_detail_view.021"));
     }
   }
 
@@ -321,9 +323,9 @@ export function ContactDetailView({
         if (error) throw error;
       }
 
-      toast.success('Custom fields saved');
+      toast.success(t("contacts_contact_detail_view.022"));
     } catch {
-      toast.error('Failed to save custom fields');
+      toast.error(t("contacts_contact_detail_view.023"));
     }
     setSavingCustom(false);
   }
@@ -357,14 +359,14 @@ export function ContactDetailView({
       const payload = await res.json().catch(() => ({}));
       if (!res.ok) {
         const reason = payload?.error || `HTTP ${res.status}`;
-        toast.error(`Failed to send template: ${reason}`);
+        toast.error(t("contacts_contact_detail_view.024", { reason: reason }));
         return;
       }
 
       toast.success(`Template "${template.name}" sent`);
     } catch (err) {
       const reason = err instanceof Error ? err.message : 'network error';
-      toast.error(`Failed to send template: ${reason}`);
+      toast.error(t("contacts_contact_detail_view.024", { reason: reason }));
     } finally {
       setSendingTemplate(false);
     }
@@ -405,9 +407,7 @@ export function ContactDetailView({
                   <SheetTitle className="text-popover-foreground truncate">
                     {contact.name || 'Unknown'}
                   </SheetTitle>
-                  <SheetDescription className="text-muted-foreground text-xs mt-0.5">
-                    Contact details
-                  </SheetDescription>
+                  <SheetDescription className="text-muted-foreground text-xs mt-0.5"><T k="contacts_contact_detail_view.002" /></SheetDescription>
                   <div className="flex flex-wrap items-center gap-3 mt-1.5 text-xs text-muted-foreground">
                     <button
                       onClick={copyPhone}
@@ -459,40 +459,30 @@ export function ContactDetailView({
                 <TabsTrigger
                   value="details"
                   className="data-active:bg-muted data-active:text-primary text-muted-foreground"
-                >
-                  Details
-                </TabsTrigger>
+                ><T k="contacts_contact_detail_view.003" /></TabsTrigger>
                 <TabsTrigger
                   value="tags"
                   className="data-active:bg-muted data-active:text-primary text-muted-foreground"
-                >
-                  Tags
-                </TabsTrigger>
+                ><T k="dashboard_contacts_page.003" /></TabsTrigger>
                 <TabsTrigger
                   value="notes"
                   className="data-active:bg-muted data-active:text-primary text-muted-foreground"
-                >
-                  Notes
-                </TabsTrigger>
+                ><T k="contacts_contact_detail_view.004" /></TabsTrigger>
                 <TabsTrigger
                   value="custom"
                   className="data-active:bg-muted data-active:text-primary text-muted-foreground"
-                >
-                  Custom Fields
-                </TabsTrigger>
+                ><T k="contacts_contact_detail_view.005" /></TabsTrigger>
                 <TabsTrigger
                   value="deals"
                   className="data-active:bg-muted data-active:text-primary text-muted-foreground"
-                >
-                  Deals
-                </TabsTrigger>
+                ><T k="contacts_contact_detail_view.006" /></TabsTrigger>
               </TabsList>
 
               {/* Details Tab */}
               <TabsContent value="details" className="flex-1 overflow-y-auto px-4 py-3">
                 <div className="space-y-3">
                   <div className="space-y-1.5">
-                    <Label className="text-muted-foreground text-xs">Name</Label>
+                    <Label className="text-muted-foreground text-xs"><T k="dashboard_broadcasts_page.003" /></Label>
                     <Input
                       value={editName}
                       onChange={(e) => setEditName(e.target.value)}
@@ -510,7 +500,7 @@ export function ContactDetailView({
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-muted-foreground text-xs">Email</Label>
+                    <Label className="text-muted-foreground text-xs"><T k="auth_forgot_password_page.005" /></Label>
                     <Input
                       value={editEmail}
                       onChange={(e) => setEditEmail(e.target.value)}
@@ -518,7 +508,7 @@ export function ContactDetailView({
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-muted-foreground text-xs">Company</Label>
+                    <Label className="text-muted-foreground text-xs"><T k="dashboard_contacts_page.002" /></Label>
                     <Input
                       value={editCompany}
                       onChange={(e) => setEditCompany(e.target.value)}
@@ -544,13 +534,9 @@ export function ContactDetailView({
               {/* Tags Tab */}
               <TabsContent value="tags" className="flex-1 overflow-y-auto px-4 py-3">
                 <div className="space-y-3">
-                  <p className="text-xs text-muted-foreground">
-                    Click a tag to add or remove it from this contact.
-                  </p>
+                  <p className="text-xs text-muted-foreground"><T k="contacts_contact_detail_view.007" /></p>
                   {allTags.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">
-                      No tags available. Create tags in Settings.
-                    </p>
+                    <p className="text-sm text-muted-foreground"><T k="contacts_contact_detail_view.008" /></p>
                   ) : (
                     <div className="flex flex-wrap gap-2">
                       {allTags.map((tag) => {
@@ -586,7 +572,7 @@ export function ContactDetailView({
                   <Textarea
                     value={newNote}
                     onChange={(e) => setNewNote(e.target.value)}
-                    placeholder="Write a note..."
+                    placeholder={t("contacts_contact_detail_view.013")}
                     className="bg-muted border-border text-foreground placeholder:text-muted-foreground min-h-[60px] text-sm resize-none"
                   />
                   <Button
@@ -608,11 +594,7 @@ export function ContactDetailView({
                   {loadingNotes ? (
                     <div className="flex items-center justify-center py-8">
                       <Loader2 className="size-5 animate-spin text-muted-foreground" />
-                    </div>
-                  ) : notes.length === 0 ? (
-                    <p className="text-sm text-muted-foreground text-center py-8">
-                      No notes yet.
-                    </p>
+                    </div>) : notes.length === 0 ? (<p className="text-sm text-muted-foreground text-center py-8"><T k="contacts_contact_detail_view.010" /></p>
                   ) : (
                     notes.map((note) => (
                       <div
@@ -650,11 +632,7 @@ export function ContactDetailView({
                 {loadingCustom ? (
                   <div className="flex items-center justify-center py-8">
                     <Loader2 className="size-5 animate-spin text-muted-foreground" />
-                  </div>
-                ) : customFields.length === 0 ? (
-                  <p className="text-sm text-muted-foreground text-center py-8">
-                    No custom fields defined. Create them in Settings.
-                  </p>
+                  </div>) : customFields.length === 0 ? (<p className="text-sm text-muted-foreground text-center py-8"><T k="contacts_contact_detail_view.011" /></p>
                 ) : (
                   <div className="space-y-3">
                     {customFields.map((field) => (
@@ -697,9 +675,7 @@ export function ContactDetailView({
                 {loadingDeals ? (
                   <div className="flex items-center justify-center py-8">
                     <Loader2 className="size-5 animate-spin text-primary" />
-                  </div>
-                ) : deals.length === 0 ? (
-                  <p className="text-xs text-muted-foreground">No deals yet</p>
+                  </div>) : deals.length === 0 ? (<p className="text-xs text-muted-foreground"><T k="contacts_contact_detail_view.001" /></p>
                 ) : (
                   <div className="space-y-2">
                     {deals.map((deal) => (

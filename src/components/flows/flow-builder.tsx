@@ -61,6 +61,7 @@ import { NodeKeySelect } from './forms/fields';
 import { IssueLine } from './validation-panel';
 import { useFlowEditor, type BuilderState } from './flow-editor-state';
 
+import { T, useT } from "@/i18n/provider";
 // ============================================================
 // Local state shape — mirrors the DB but the configs are typed
 // loosely (Record<string, unknown>) since each node_type carries a
@@ -72,6 +73,7 @@ import { useFlowEditor, type BuilderState } from './flow-editor-state';
 // ============================================================
 
 export function FlowBuilder() {
+  const { t } = useT();
   const {
     state,
     setState,
@@ -171,8 +173,8 @@ export function FlowBuilder() {
 
         {state.nodes.length === 0 ? (
           <div className="border-border bg-card/50 text-muted-foreground rounded-lg border border-dashed p-8 text-center text-sm">
-            Add a <strong>Start</strong> node, then a{' '}
-            <strong>Send buttons</strong> node, then a <strong>Handoff</strong>{' '}
+            Add a <strong><T k="flows_flow_builder.001" /></strong> node, then a{' '}
+            <strong><T k="flows_flow_builder.002" /></strong> <T k="flows_flow_builder.003" /> <strong><T k="flows_flow_builder.004" /></strong>{' '}
             — that&apos;s the welcome-menu shape from the brief.
           </div>
         ) : (
@@ -224,6 +226,7 @@ function KeywordsInput({
   keywords: string[];
   onChange: (keywords: string[]) => void;
 }) {
+  const { t } = useT();
   const [draft, setDraft] = useState(keywords.join(', '));
 
   function commit() {
@@ -246,7 +249,7 @@ function KeywordsInput({
           commit();
         }
       }}
-      placeholder="support, help, hi"
+      placeholder={t("flows_flow_builder.015")}
       className="bg-muted"
     />
   );
@@ -265,14 +268,13 @@ function TriggerPanel({
   setState: React.Dispatch<React.SetStateAction<BuilderState>>;
   triggerIssues: ValidationIssue[];
 }) {
+  const { t } = useT();
   return (
     <section className="border-border bg-card rounded-lg border p-4">
-      <h2 className="text-foreground mb-3 text-sm font-semibold">Trigger</h2>
+      <h2 className="text-foreground mb-3 text-sm font-semibold"><T k="automations_automation_builder.005" /></h2>
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
         <div>
-          <label className="text-muted-foreground mb-1 block text-xs">
-            When…
-          </label>
+          <label className="text-muted-foreground mb-1 block text-xs"><T k="flows_flow_builder.006" /></label>
           <Select
             value={state.trigger_type}
             onValueChange={(v) =>
@@ -288,23 +290,15 @@ function TriggerPanel({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="keyword">
-                A message contains a keyword
-              </SelectItem>
-              <SelectItem value="first_inbound_message">
-                Customer&apos;s first ever inbound message
-              </SelectItem>
-              <SelectItem value="manual">
-                Manual only (no auto-trigger)
-              </SelectItem>
+              <SelectItem value="keyword"><T k="flows_flow_builder.007" /></SelectItem>
+              <SelectItem value="first_inbound_message"><T k="flows_flow_builder.008" /></SelectItem>
+              <SelectItem value="manual"><T k="flows_flow_builder.009" /></SelectItem>
             </SelectContent>
           </Select>
         </div>
         {state.trigger_type === 'keyword' && (
           <div>
-            <label className="text-muted-foreground mb-1 block text-xs">
-              Keywords (comma-separated)
-            </label>
+            <label className="text-muted-foreground mb-1 block text-xs"><T k="automations_automation_builder.019" /></label>
             <KeywordsInput
               keywords={
                 Array.isArray(state.trigger_config.keywords)
@@ -343,16 +337,17 @@ function EntryPicker({
   state: BuilderState;
   setState: React.Dispatch<React.SetStateAction<BuilderState>>;
 }) {
+  const { t } = useT();
   if (state.nodes.length === 0) return null;
   return (
     <section className="border-border bg-card flex items-center gap-3 rounded-lg border p-3">
       <CornerDownRight className="text-primary h-4 w-4 shrink-0" />
-      <span className="text-muted-foreground text-xs">Entry node:</span>
+      <span className="text-muted-foreground text-xs"><T k="flows_flow_builder.005" /></span>
       <NodeKeySelect
         value={state.entry_node_id}
         nodes={state.nodes}
         onChange={(key) => setState((s) => ({ ...s, entry_node_id: key }))}
-        placeholder="Pick the first node…"
+        placeholder={t("flows_flow_builder.016")}
         className="max-w-xs flex-1"
       />
     </section>
@@ -433,9 +428,7 @@ function NodeCard({
               <Badge
                 variant="outline"
                 className="border-primary/40 bg-primary/10 text-primary text-[10px]"
-              >
-                Entry
-              </Badge>
+              ><T k="flows_flow_builder.010" /></Badge>
             )}
           </div>
           {!expanded && preview && (
@@ -464,9 +457,7 @@ function NodeCard({
           <div className="border-border mt-4 flex items-center justify-between border-t pt-3">
             <div className="flex items-center gap-2">
               {!isEntry && (
-                <Button variant="ghost" size="sm" onClick={onSetEntry}>
-                  Set as entry
-                </Button>
+                <Button variant="ghost" size="sm" onClick={onSetEntry}><T k="flows_flow_builder.011" /></Button>
               )}
             </div>
             <Button
@@ -475,9 +466,7 @@ function NodeCard({
               onClick={onRemove}
               className="text-red-400 hover:bg-red-500/10 hover:text-red-300"
             >
-              <Trash2 className="h-3.5 w-3.5" />
-              Remove node
-            </Button>
+              <Trash2 className="h-3.5 w-3.5" /><T k="flows_flow_builder.012" /></Button>
           </div>
           {issues.length > 0 && (
             <div className="mt-3 flex flex-col gap-1 rounded-md bg-red-500/5 p-2">
@@ -536,9 +525,7 @@ function NodeConfigWithAdvanced({
         {showAdvanced && (
           <div className="mt-3 flex flex-col gap-3">
             <div>
-              <label className="text-muted-foreground mb-1 block text-xs">
-                Node key (internal identifier — keep stable for analytics)
-              </label>
+              <label className="text-muted-foreground mb-1 block text-xs"><T k="flows_flow_builder.013" /></label>
               <Input
                 value={node.node_key}
                 onChange={(e) =>
@@ -566,6 +553,7 @@ function NodeConfigWithAdvanced({
 // ============================================================
 
 function AddNodeButton({ onAdd }: { onAdd: (type: NodeType) => void }) {
+  const { t } = useT();
   const types: NodeType[] = [
     'start',
     'send_buttons',
@@ -582,11 +570,9 @@ function AddNodeButton({ onAdd }: { onAdd: (type: NodeType) => void }) {
     <DropdownMenu>
       <DropdownMenuTrigger
         className="border-border bg-card text-foreground hover:bg-muted inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-medium transition-colors"
-        aria-label="Add node"
+        aria-label={t("flows_flow_builder.014")}
       >
-        <Plus className="h-3.5 w-3.5" />
-        Add node
-      </DropdownMenuTrigger>
+        <Plus className="h-3.5 w-3.5" /><T k="flows_flow_builder.014" /></DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="border-border bg-popover">
         {groupNodeTypesByCategory(types).map((group, i) => (
           <div key={group.id}>

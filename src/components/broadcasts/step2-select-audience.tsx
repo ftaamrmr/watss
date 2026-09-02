@@ -15,6 +15,7 @@ import {
   X,
 } from 'lucide-react';
 
+import { T, useT } from "@/i18n/provider";
 type AudienceType = 'all' | 'tags' | 'custom_field' | 'csv';
 type CustomFieldOperator = 'is' | 'is_not' | 'contains';
 
@@ -83,6 +84,7 @@ export function Step2SelectAudience({
   onNext,
   onBack,
 }: Step2Props) {
+  const { t } = useT();
   const [tags, setTags] = useState<Tag[]>([]);
   const [customFields, setCustomFields] = useState<CustomField[]>([]);
   const [loadingTags, setLoadingTags] = useState(false);
@@ -249,10 +251,8 @@ export function Step2SelectAudience({
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-lg font-semibold text-foreground">Select Audience</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Choose who will receive this broadcast.
-        </p>
+        <h2 className="text-lg font-semibold text-foreground"><T k="broadcasts_step2_select_audience.001" /></h2>
+        <p className="mt-1 text-sm text-muted-foreground"><T k="broadcasts_step2_select_audience.010" /></p>
       </div>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -305,13 +305,9 @@ export function Step2SelectAudience({
 
       {audience.type === 'tags' && (
         <div className="rounded-xl border border-border bg-card/50 p-4">
-          <p className="mb-3 text-sm font-medium text-foreground">Select Tags</p>
+          <p className="mb-3 text-sm font-medium text-foreground"><T k="broadcasts_step2_select_audience.002" /></p>
           {loadingTags ? (
-            <Loader2 className="h-5 w-5 animate-spin text-primary" />
-          ) : tags.length === 0 ? (
-            <p className="text-xs text-muted-foreground">
-              No tags found. Create tags in Settings.
-            </p>
+            <Loader2 className="h-5 w-5 animate-spin text-primary" />) : tags.length === 0 ? (<p className="text-xs text-muted-foreground"><T k="broadcasts_step2_select_audience.012" /></p>
           ) : (
             <div className="flex flex-wrap gap-2">
               {tags.map((tag) => {
@@ -341,13 +337,9 @@ export function Step2SelectAudience({
 
       {audience.type === 'custom_field' && (
         <div className="space-y-3 rounded-xl border border-border bg-card/50 p-4">
-          <p className="text-sm font-medium text-foreground">Custom Field Filter</p>
+          <p className="text-sm font-medium text-foreground"><T k="broadcasts_step2_select_audience.003" /></p>
           {loadingFields ? (
-            <Loader2 className="h-5 w-5 animate-spin text-primary" />
-          ) : customFields.length === 0 ? (
-            <p className="text-xs text-muted-foreground">
-              No custom fields defined. Create one in Settings → Custom Fields.
-            </p>
+            <Loader2 className="h-5 w-5 animate-spin text-primary" />) : customFields.length === 0 ? (<p className="text-xs text-muted-foreground"><T k="broadcasts_step2_select_audience.014" /></p>
           ) : (
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-[minmax(0,1fr)_140px_minmax(0,1fr)]">
               <select
@@ -355,7 +347,7 @@ export function Step2SelectAudience({
                 onChange={(e) => updateCustomField({ fieldId: e.target.value })}
                 className="h-9 rounded-lg border border-border bg-muted px-2.5 text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary"
               >
-                <option value="">Select field…</option>
+                <option value=""><T k="broadcasts_step2_select_audience.004" /></option>
                 {customFields.map((f) => (
                   <option key={f.id} value={f.id}>
                     {f.field_name}
@@ -381,7 +373,7 @@ export function Step2SelectAudience({
                 type="text"
                 value={audience.customField?.value ?? ''}
                 onChange={(e) => updateCustomField({ value: e.target.value })}
-                placeholder="Value"
+                placeholder={t("automations_automation_builder.044")}
                 className="h-9 rounded-lg border border-border bg-muted px-2.5 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary"
               />
             </div>
@@ -393,13 +385,11 @@ export function Step2SelectAudience({
       <div className="rounded-xl border border-border bg-card/50 p-4">
         <div className="mb-3 flex items-center gap-2">
           <X className="h-4 w-4 text-red-400" />
-          <p className="text-sm font-medium text-foreground">
-            Exclude contacts with these tags
-          </p>
-          <span className="text-xs text-muted-foreground">(optional)</span>
+          <p className="text-sm font-medium text-foreground"><T k="broadcasts_step2_select_audience.015" /></p>
+          <span className="text-xs text-muted-foreground"><T k="broadcasts_step2_select_audience.005" /></span>
         </div>
         {tags.length === 0 ? (
-          <p className="text-xs text-muted-foreground">No tags available.</p>
+          <p className="text-xs text-muted-foreground"><T k="broadcasts_step2_select_audience.006" /></p>
         ) : (
           <div className="flex flex-wrap gap-2">
             {tags.map((tag) => {
@@ -428,24 +418,20 @@ export function Step2SelectAudience({
 
       {/* Audience Summary */}
       <div className="rounded-xl border border-border bg-card/50 p-4">
-        <p className="mb-2 text-sm font-medium text-foreground">Audience Summary</p>
+        <p className="mb-2 text-sm font-medium text-foreground"><T k="broadcasts_step2_select_audience.007" /></p>
         {loadingCount ? (
           <div className="flex items-center gap-2">
             <Loader2 className="h-4 w-4 animate-spin text-primary" />
-            <span className="text-xs text-muted-foreground">Calculating…</span>
-          </div>
-        ) : estimatedCount !== null ? (
-          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground"><T k="broadcasts_step2_select_audience.008" /></span>
+          </div>) : estimatedCount !== null ? (<div className="flex items-center gap-2">
             <Users className="h-4 w-4 text-primary" />
             <span className="text-sm text-foreground">
               {estimatedCount.toLocaleString()}
             </span>
-            <span className="text-xs text-muted-foreground">estimated recipients</span>
+            <span className="text-xs text-muted-foreground"><T k="broadcasts_step2_select_audience.009" /></span>
           </div>
         ) : (
-          <p className="text-xs text-muted-foreground">
-            Select an audience type to see the estimate.
-          </p>
+          <p className="text-xs text-muted-foreground"><T k="broadcasts_step2_select_audience.017" /></p>
         )}
       </div>
 
@@ -455,16 +441,12 @@ export function Step2SelectAudience({
           onClick={onBack}
           className="border-border text-muted-foreground"
         >
-          <ArrowLeft className="h-4 w-4" />
-          Back
-        </Button>
+          <ArrowLeft className="h-4 w-4" /><T k="dashboard_automations_id_logs_page.004" /></Button>
         <Button
           onClick={onNext}
           disabled={!isValid}
           className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
-        >
-          Next
-          <ArrowRight className="h-4 w-4" />
+        ><T k="broadcasts_step1_choose_template.005" /><ArrowRight className="h-4 w-4" />
         </Button>
       </div>
     </div>

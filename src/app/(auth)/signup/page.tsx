@@ -16,9 +16,11 @@ import {
 } from "@/components/ui/card";
 import { MessageSquare, CheckCircle, UsersRound } from "lucide-react";
 
+import { T, useT } from "@/i18n/provider";
 // `useSearchParams` opts the component out of static prerendering
 // unless wrapped in Suspense — same pattern as /login.
 export default function SignupPage() {
+  const { t } = useT();
   return (
     <Suspense fallback={null}>
       <SignupPageInner />
@@ -27,6 +29,7 @@ export default function SignupPage() {
 }
 
 function SignupPageInner() {
+  const { t } = useT();
   const searchParams = useSearchParams();
   // When the user lands here from `/join/<token>` we carry the
   // invite token in the query so it survives the signup → email
@@ -97,9 +100,7 @@ function SignupPageInner() {
             <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
               <CheckCircle className="h-6 w-6 text-primary" />
             </div>
-            <CardTitle className="text-xl text-foreground">
-              Check your email
-            </CardTitle>
+            <CardTitle className="text-xl text-foreground"><T k="auth_forgot_password_page.002" /></CardTitle>
             <CardDescription className="text-muted-foreground">
               We&apos;ve sent a confirmation link to{" "}
               <span className="text-foreground">{email}</span>. Please check your
@@ -117,9 +118,7 @@ function SignupPageInner() {
               <Button
                 variant="outline"
                 className="w-full border-border text-muted-foreground hover:bg-muted hover:text-foreground"
-              >
-                Back to sign in
-              </Button>
+              ><T k="auth_forgot_password_page.003" /></Button>
             </Link>
           </CardContent>
         </Card>
@@ -156,13 +155,11 @@ function SignupPageInner() {
             )}
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="fullName" className="text-muted-foreground">
-                Full name
-              </Label>
+              <Label htmlFor="fullName" className="text-muted-foreground"><T k="auth_signup_page.001" /></Label>
               <Input
                 id="fullName"
                 type="text"
-                placeholder="John Doe"
+                placeholder={t("auth_signup_page.004")}
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 required
@@ -171,13 +168,11 @@ function SignupPageInner() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="email" className="text-muted-foreground">
-                Email
-              </Label>
+              <Label htmlFor="email" className="text-muted-foreground"><T k="auth_forgot_password_page.005" /></Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="you@example.com"
+                placeholder={t("auth_forgot_password_page.006")}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -186,13 +181,11 @@ function SignupPageInner() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="password" className="text-muted-foreground">
-                Password
-              </Label>
+              <Label htmlFor="password" className="text-muted-foreground"><T k="auth_login_page.001" /></Label>
               <Input
                 id="password"
                 type="password"
-                placeholder="At least 6 characters"
+                placeholder={t("auth_signup_page.005")}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -201,13 +194,11 @@ function SignupPageInner() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="confirmPassword" className="text-muted-foreground">
-                Confirm password
-              </Label>
+              <Label htmlFor="confirmPassword" className="text-muted-foreground"><T k="auth_signup_page.002" /></Label>
               <Input
                 id="confirmPassword"
                 type="password"
-                placeholder="Repeat your password"
+                placeholder={t("auth_signup_page.006")}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
@@ -233,9 +224,7 @@ function SignupPageInner() {
                   : "/login"
               }
               className="text-primary hover:text-primary/80"
-            >
-              Sign in
-            </Link>
+            ><T k="auth_signup_page.003" /></Link>
           </p>
         </CardContent>
       </Card>

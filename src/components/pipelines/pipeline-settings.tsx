@@ -36,6 +36,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
+import { T, useT } from "@/i18n/provider";
 const STAGE_COLORS = [
   "#3b82f6",
   "#6366f1",
@@ -68,6 +69,7 @@ export function PipelineSettings({
   onStagesChanged,
   onCreateNewPipeline,
 }: PipelineSettingsProps) {
+  const { t } = useT();
   const supabase = createClient();
 
   const [name, setName] = useState(pipeline.name);
@@ -127,14 +129,14 @@ export function PipelineSettings({
     setSaving(false);
 
     if (renameRes.error || stagesRes.error) {
-      toast.error("Failed to save pipeline");
+      toast.error(t("pipelines_pipeline_settings.009"));
       return;
     }
 
     onOpenChange(false);
     onPipelinesChanged();
     onStagesChanged();
-    toast.success("Pipeline saved");
+    toast.success(t("pipelines_pipeline_settings.010"));
   }
 
   async function handleAddStage() {
@@ -151,7 +153,7 @@ export function PipelineSettings({
       .select()
       .single();
     if (error || !data) {
-      toast.error("Failed to add stage");
+      toast.error(t("pipelines_pipeline_settings.011"));
       return;
     }
     setLocalStages([...localStages, data as PipelineStage]);
@@ -166,7 +168,7 @@ export function PipelineSettings({
       .select("id", { count: "exact", head: true })
       .eq("stage_id", stageId);
     if (count && count > 0) {
-      toast.error("Move or delete deals in this stage first");
+      toast.error(t("pipelines_pipeline_settings.012"));
       return;
     }
     const { error } = await supabase
@@ -174,7 +176,7 @@ export function PipelineSettings({
       .delete()
       .eq("id", stageId);
     if (error) {
-      toast.error("Failed to delete stage");
+      toast.error(t("pipelines_pipeline_settings.013"));
       return;
     }
     setLocalStages(localStages.filter((s) => s.id !== stageId));
@@ -189,19 +191,19 @@ export function PipelineSettings({
       .eq("id", pipeline.id);
     setDeleting(false);
     if (error) {
-      toast.error("Failed to delete pipeline");
+      toast.error(t("pipelines_pipeline_settings.014"));
       return;
     }
     onOpenChange(false);
     onPipelinesChanged();
-    toast.success("Pipeline deleted");
+    toast.success(t("pipelines_pipeline_settings.015"));
   }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md bg-popover border-border max-h-[85vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-popover-foreground">Manage Pipeline</DialogTitle>
+          <DialogTitle className="text-popover-foreground"><T k="pipelines_pipeline_settings.001" /></DialogTitle>
         </DialogHeader>
 
         {showDeleteConfirm ? (
@@ -209,9 +211,7 @@ export function PipelineSettings({
             <div className="flex items-center gap-3 rounded-lg border border-red-500/30 bg-red-500/10 p-4">
               <AlertTriangle className="h-5 w-5 shrink-0 text-red-400" />
               <div>
-                <p className="text-sm font-medium text-red-400">
-                  Delete Pipeline
-                </p>
+                <p className="text-sm font-medium text-red-400"><T k="pipelines_pipeline_settings.003" /></p>
                 <p className="mt-1 text-xs text-muted-foreground">
                   This will archive all deals in this pipeline. This cannot be
                   undone.
@@ -223,9 +223,7 @@ export function PipelineSettings({
                 variant="outline"
                 onClick={() => setShowDeleteConfirm(false)}
                 className="border-border bg-transparent text-muted-foreground hover:bg-muted"
-              >
-                Cancel
-              </Button>
+              ><T k="dashboard_automations_page.009" /></Button>
               <Button
                 onClick={handleDeletePipeline}
                 disabled={deleting}
@@ -239,7 +237,7 @@ export function PipelineSettings({
           <>
             <div className="grid gap-4 py-2">
               <div className="grid gap-2">
-                <Label className="text-muted-foreground">Pipeline Name</Label>
+                <Label className="text-muted-foreground"><T k="dashboard_pipelines_page.002" /></Label>
                 <Input
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -248,7 +246,7 @@ export function PipelineSettings({
               </div>
 
               <div className="grid gap-2">
-                <Label className="text-muted-foreground">Stages</Label>
+                <Label className="text-muted-foreground"><T k="pipelines_pipeline_settings.002" /></Label>
                 <DndContext
                   sensors={sensors}
                   collisionDetection={closestCenter}
@@ -304,7 +302,7 @@ export function PipelineSettings({
                   <Input
                     value={newStageName}
                     onChange={(e) => setNewStageName(e.target.value)}
-                    placeholder="New stage name"
+                    placeholder={t("pipelines_pipeline_settings.006")}
                     className="border-border bg-muted text-sm text-foreground"
                     onKeyDown={(e) => {
                       if (e.key === "Enter") handleAddStage();
@@ -317,9 +315,7 @@ export function PipelineSettings({
                     disabled={!newStageName.trim()}
                     className="shrink-0 border-border bg-transparent text-muted-foreground hover:bg-muted"
                   >
-                    <Plus className="mr-1 h-3 w-3" />
-                    Add
-                  </Button>
+                    <Plus className="mr-1 h-3 w-3" /><T k="pipelines_pipeline_settings.004" /></Button>
                 </div>
               </div>
 
@@ -328,9 +324,7 @@ export function PipelineSettings({
                 onClick={onCreateNewPipeline}
                 className="w-full border-border bg-transparent text-muted-foreground hover:bg-muted"
               >
-                <Plus className="mr-1 h-3 w-3" />
-                Create a new pipeline
-              </Button>
+                <Plus className="mr-1 h-3 w-3" /><T k="pipelines_pipeline_settings.005" /></Button>
             </div>
 
             <DialogFooter className="border-border bg-popover/50">
@@ -338,16 +332,12 @@ export function PipelineSettings({
                 variant="destructive"
                 onClick={() => setShowDeleteConfirm(true)}
                 className="mr-auto bg-red-600 hover:bg-red-700"
-              >
-                Delete Pipeline
-              </Button>
+              ><T k="pipelines_pipeline_settings.003" /></Button>
               <Button
                 variant="outline"
                 onClick={() => onOpenChange(false)}
                 className="border-border bg-transparent text-muted-foreground hover:bg-muted"
-              >
-                Cancel
-              </Button>
+              ><T k="dashboard_automations_page.009" /></Button>
               <Button
                 onClick={handleSave}
                 disabled={saving || !name.trim()}
@@ -376,6 +366,7 @@ function SortableStageRow({
   onRemove: () => void;
   colors: string[];
 }) {
+  const { t } = useT();
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: stage.id });
 
@@ -396,7 +387,7 @@ function SortableStageRow({
         {...attributes}
         {...listeners}
         className="cursor-grab touch-none text-muted-foreground hover:text-foreground active:cursor-grabbing"
-        aria-label="Drag to reorder"
+        aria-label={t("pipelines_pipeline_settings.007")}
       >
         <GripVertical className="h-4 w-4" />
       </button>
@@ -427,6 +418,7 @@ function ColorSwatch({
   onChange: (v: string) => void;
   colors: string[];
 }) {
+  const { t } = useT();
   const [open, setOpen] = useState(false);
   return (
     <div className="relative">
@@ -435,7 +427,7 @@ function ColorSwatch({
         onClick={() => setOpen((v) => !v)}
         className="h-4 w-4 rounded-full border border-border"
         style={{ backgroundColor: value }}
-        aria-label="Change color"
+        aria-label={t("pipelines_pipeline_settings.008")}
       />
       {open && (
         <>

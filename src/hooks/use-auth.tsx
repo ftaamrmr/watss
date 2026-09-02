@@ -20,6 +20,7 @@ import {
   isAccountRole,
   type AccountRole,
 } from "@/lib/auth/roles";
+import { T } from "@/i18n/provider";
 
 interface Profile {
   id: string;

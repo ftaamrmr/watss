@@ -53,6 +53,7 @@ import { unlinkNodeReferences } from "@/lib/flows/edges";
 import type { FlowNodeRow, FlowRow } from "@/lib/flows/types";
 import { NODE_META, slugify, type BuilderNode, type NodeType } from "./shared";
 
+import { useT } from "@/i18n/provider";
 // ============================================================
 // State shape
 // ============================================================
@@ -133,7 +134,7 @@ export function uniqueNodeKey(base: string, existing: BuilderNode[]): string {
   return `${base}_${i}`;
 }
 
-export function defaultConfigFor(type: NodeType): Record<string, unknown> {
+export function defaultConfigFor(type: NodeType, t: (k: string) => string = (k) => k): Record<string, unknown> {
   switch (type) {
     case "start":
       return { next_node_key: "" };
@@ -142,7 +143,7 @@ export function defaultConfigFor(type: NodeType): Record<string, unknown> {
     case "send_buttons":
       return {
         text: "",
-        buttons: [{ reply_id: "yes", title: "Yes", next_node_key: "" }],
+        buttons: [{ reply_id: "yes", title: t("automations_automation_builder.038"), next_node_key: "" }],
       };
     case "send_list":
       return {
@@ -152,7 +153,7 @@ export function defaultConfigFor(type: NodeType): Record<string, unknown> {
           {
             title: "",
             rows: [
-              { reply_id: "row_1", title: "Option 1", next_node_key: "" },
+              { reply_id: "row_1", title: t("flows_flow_editor_state.001"), next_node_key: "" },
             ],
           },
         ],
@@ -236,6 +237,7 @@ export function FlowEditorProvider({
   initialNodes,
   children,
 }: ProviderProps) {
+  const { t } = useT();
   const router = useRouter();
 
   const [state, setStateRaw] = useState<BuilderState>(() => ({
@@ -347,9 +349,9 @@ export function FlowEditorProvider({
         throw new Error(json.error ?? `Save failed: ${res.status}`);
       }
       setDirty(false);
-      toast.success("Saved.");
+      toast.success(t("flows_flow_editor_state.005"));
     } catch (err) {
-      const msg = err instanceof Error ? err.message : "Save failed";
+      const msg = err instanceof Error ? err.message: t("flows_flow_editor_state.002");
       toast.error(msg);
     } finally {
       setSaving(false);
@@ -360,7 +362,7 @@ export function FlowEditorProvider({
   const setStatus = useCallback(
     async (next: BuilderState["status"]) => {
       if (next === "active" && !canActivate) {
-        toast.error("Fix the issues below before activating.");
+        toast.error(t("flows_flow_editor_state.006"));
         return;
       }
       setActivating(true);
@@ -389,7 +391,7 @@ export function FlowEditorProvider({
               : "Saved as draft.",
         );
       } catch (err) {
-        const msg = err instanceof Error ? err.message : "Status update failed";
+        const msg = err instanceof Error ? err.message: t("flows_flow_editor_state.003");
         toast.error(msg);
       } finally {
         setActivating(false);
@@ -411,7 +413,7 @@ export function FlowEditorProvider({
       if (!res.ok) throw new Error(`Delete failed: ${res.status}`);
       router.push("/flows");
     } catch (err) {
-      const msg = err instanceof Error ? err.message : "Delete failed";
+      const msg = err instanceof Error ? err.message: t("flows_flow_editor_state.004");
       toast.error(msg);
     }
   }, [initialFlow.id, router, state.name]);
@@ -481,7 +483,7 @@ export function FlowEditorProvider({
         const next: BuilderNode = {
           node_key,
           node_type: type,
-          config: defaultConfigFor(type),
+          config: defaultConfigFor(type, t),
         };
         return {
           ...s,

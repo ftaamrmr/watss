@@ -4,8 +4,9 @@ import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Message } from "@/types";
 
+import { useT } from "@/i18n/provider";
 interface ReplyQuoteProps {
-  /** Sender label of the quoted message: "You" for our own messages,
+  /** Sender label of the quoted message: t("inbox_message_thread.012") for our own messages,
    *  contact name for customer-sent messages. Caller resolves this — the
    *  quote component doesn't see the parent Message. */
   authorLabel: string;
@@ -26,6 +27,7 @@ export function ReplyQuote({
   onDismiss,
   onPrimary = false,
 }: ReplyQuoteProps) {
+  const { t } = useT();
   const isChip = !!onDismiss;
   return (
     <div
@@ -63,7 +65,7 @@ export function ReplyQuote({
         <button
           type="button"
           onClick={onDismiss}
-          aria-label="Cancel reply"
+          aria-label={t("inbox_reply_quote.001")}
           className="flex h-6 w-6 shrink-0 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground"
         >
           <X className="h-3.5 w-3.5" />

@@ -20,6 +20,7 @@ import { format, formatDistanceToNow } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
+import { T, useT } from "@/i18n/provider";
 /**
  * Run history viewer.
  *
@@ -62,38 +63,39 @@ const STATUS_META: Record<
   { label: string; classes: string; icon: typeof Clock }
 > = {
   active: {
-    label: "Active",
+    label: "dashboard_flows_id_runs_page.003",
     classes: "border-emerald-600/40 bg-emerald-500/10 text-emerald-300",
     icon: PlayCircle,
   },
   completed: {
-    label: "Completed",
+    label: "dashboard_flows_id_runs_page.004",
     classes: "border-border bg-muted text-muted-foreground",
     icon: CircleCheck,
   },
   handed_off: {
-    label: "Handed off",
+    label: "dashboard_flows_id_runs_page.005",
     classes: "border-amber-600/40 bg-amber-500/10 text-amber-300",
     icon: UserPlus,
   },
   timed_out: {
-    label: "Timed out",
+    label: "dashboard_flows_id_runs_page.006",
     classes: "border-border bg-muted/60 text-muted-foreground",
     icon: Clock,
   },
   paused_by_agent: {
-    label: "Paused by agent",
+    label: "dashboard_flows_id_runs_page.007",
     classes: "border-border bg-muted text-muted-foreground",
     icon: PauseCircle,
   },
   failed: {
-    label: "Failed",
+    label: "dashboard_broadcasts_id_page.015",
     classes: "border-red-600/40 bg-red-500/10 text-red-300",
     icon: CircleAlert,
   },
 };
 
 export default function FlowRunsPage() {
+  const { t } = useT();
   const router = useRouter();
   const params = useParams<{ id: string }>();
 
@@ -158,14 +160,12 @@ export default function FlowRunsPage() {
   if (notFound || !flow) {
     return (
       <div className="flex h-full flex-col items-center justify-center gap-3">
-        <p className="text-sm text-muted-foreground">Flow not found.</p>
+        <p className="text-sm text-muted-foreground"><T k="dashboard_flows_id_page.001" /></p>
         <button
           type="button"
           onClick={() => router.push("/flows")}
           className="text-sm text-primary hover:opacity-80"
-        >
-          ← Back to flows
-        </button>
+        ><T k="dashboard_flows_id_page.002" /></button>
       </div>
     );
   }
@@ -180,7 +180,7 @@ export default function FlowRunsPage() {
         <ArrowLeft className="h-3 w-3" />
         {flow.name}
       </button>
-      <h1 className="text-xl font-semibold text-foreground">Runs</h1>
+      <h1 className="text-xl font-semibold text-foreground"><T k="dashboard_flows_id_runs_page.001" /></h1>
       <p className="mt-1 text-sm text-muted-foreground">
         The 50 most recent times this flow ran. Expand a row to see the engine&apos;s
         per-step log.
@@ -219,10 +219,11 @@ function RunCard({
   expanded: boolean;
   onToggle: () => void;
 }) {
+  const { t } = useT();
   const meta = STATUS_META[run.status];
   const StatusIcon = meta.icon;
   const contactLabel =
-    run.contact?.name?.trim() || run.contact?.phone || "Unknown contact";
+    run.contact?.name?.trim() || run.contact?.phone || t("dashboard_flows_id_runs_page.008");
   const duration = run.ended_at
     ? formatDistanceToNow(new Date(run.ended_at), {
         addSuffix: false,
@@ -247,7 +248,7 @@ function RunCard({
             </span>
             <Badge variant="outline" className={cn("gap-1", meta.classes)}>
               <StatusIcon className="h-3 w-3" />
-              {meta.label}
+              {t(meta.label)}
             </Badge>
             {run.status === "active" && run.current_node_key && (
               <code className="rounded bg-muted px-1.5 py-0.5 text-[10px] text-muted-foreground">
@@ -278,9 +279,7 @@ function RunCard({
           )}
           <div className="flex flex-col gap-1">
             {events.length === 0 ? (
-              <p className="text-xs text-muted-foreground">
-                No events recorded for this run.
-              </p>
+              <p className="text-xs text-muted-foreground"><T k="dashboard_flows_id_runs_page.002" /></p>
             ) : (
               events.map((ev, ix) => <EventLine key={ix} ev={ev} />)
             )}
@@ -304,6 +303,7 @@ const EVENT_COLOR: Record<string, string> = {
 };
 
 function EventLine({ ev }: { ev: EventRow }) {
+  const { t } = useT();
   const cls = EVENT_COLOR[ev.event_type] ?? "text-muted-foreground";
   return (
     <div className="flex items-start gap-2 rounded-md px-2 py-1 text-xs">

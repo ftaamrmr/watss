@@ -15,7 +15,9 @@ import {
 } from "@/components/ui/card";
 import { MessageSquare, CheckCircle, ArrowLeft } from "lucide-react";
 
+import { T, useT } from "@/i18n/provider";
 export default function ForgotPasswordPage() {
+  const { t } = useT();
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -49,9 +51,7 @@ export default function ForgotPasswordPage() {
             <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
               <CheckCircle className="h-6 w-6 text-primary" />
             </div>
-            <CardTitle className="text-xl text-foreground">
-              Check your email
-            </CardTitle>
+            <CardTitle className="text-xl text-foreground"><T k="auth_forgot_password_page.002" /></CardTitle>
             <CardDescription className="text-muted-foreground">
               We&apos;ve sent a password reset link to{" "}
               <span className="text-foreground">{email}</span>. Please check your
@@ -63,9 +63,7 @@ export default function ForgotPasswordPage() {
               <Button
                 variant="outline"
                 className="w-full border-border text-muted-foreground hover:bg-muted hover:text-foreground"
-              >
-                Back to sign in
-              </Button>
+              ><T k="auth_forgot_password_page.003" /></Button>
             </Link>
           </CardContent>
         </Card>
@@ -80,10 +78,8 @@ export default function ForgotPasswordPage() {
           <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
             <MessageSquare className="h-6 w-6 text-primary" />
           </div>
-          <CardTitle className="text-xl text-foreground">Reset password</CardTitle>
-          <CardDescription className="text-muted-foreground">
-            Enter your email and we&apos;ll send you a reset link
-          </CardDescription>
+          <CardTitle className="text-xl text-foreground"><T k="auth_forgot_password_page.001" /></CardTitle>
+          <CardDescription className="text-muted-foreground"><T k="auth_forgot_password_page.004" /></CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleReset} className="flex flex-col gap-4">
@@ -94,13 +90,11 @@ export default function ForgotPasswordPage() {
             )}
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="email" className="text-muted-foreground">
-                Email
-              </Label>
+              <Label htmlFor="email" className="text-muted-foreground"><T k="auth_forgot_password_page.005" /></Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="you@example.com"
+                placeholder={t("auth_forgot_password_page.006")}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -121,9 +115,7 @@ export default function ForgotPasswordPage() {
             href="/login"
             className="mt-6 flex items-center justify-center gap-2 text-sm text-muted-foreground hover:text-foreground"
           >
-            <ArrowLeft className="h-4 w-4" />
-            Back to sign in
-          </Link>
+            <ArrowLeft className="h-4 w-4" /><T k="auth_forgot_password_page.003" /></Link>
         </CardContent>
       </Card>
     </div>

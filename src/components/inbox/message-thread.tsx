@@ -49,6 +49,7 @@ import { TemplatePicker } from "./template-picker";
 import { buildReplyPreview } from "./reply-quote";
 import { toast } from "sonner";
 
+import { T, useT } from "@/i18n/provider";
 interface ReplyDraft {
   id: string;
   authorLabel: string;
@@ -133,9 +134,9 @@ function groupMessagesByDate(messages: Message[]) {
 }
 
 const STATUS_OPTIONS: { label: string; value: ConversationStatus; color: string }[] = [
-  { label: "Open", value: "open", color: "text-primary" },
-  { label: "Pending", value: "pending", color: "text-amber-400" },
-  { label: "Closed", value: "closed", color: "text-muted-foreground" },
+  { label: "inbox_conversation_list.006", value: "open", color: "text-primary" },
+  { label: "inbox_conversation_list.007", value: "pending", color: "text-amber-400" },
+  { label: "inbox_conversation_list.008", value: "closed", color: "text-muted-foreground" },
 ];
 
 /**
@@ -165,6 +166,7 @@ export function MessageThread({
   contactPanelOpen,
   onToggleContactPanel,
 }: MessageThreadProps) {
+  const { t } = useT();
   const { user } = useAuth();
   const { getPresence, getRow, now } = usePresence();
   const [loading, setLoading] = useState(false);
@@ -475,7 +477,7 @@ export function MessageThread({
         if (!res.ok) {
           const reason = payload?.error || `HTTP ${res.status}`;
           console.error("Failed to send message:", reason);
-          toast.error(`Failed to send: ${reason}`);
+          toast.error(t("inbox_message_thread.013", { reason }));
           // Mark the optimistic bubble as failed so the user sees what happened
           onUpdateMessage(tempId, { status: "failed" });
           return;
@@ -488,7 +490,7 @@ export function MessageThread({
       } catch (err) {
         console.error("Failed to send message:", err);
         const reason = err instanceof Error ? err.message : "network error";
-        toast.error(`Failed to send: ${reason}`);
+        toast.error(t("inbox_message_thread.013", { reason }));
         onUpdateMessage(tempId, { status: "failed" });
       }
     },
@@ -541,7 +543,7 @@ export function MessageThread({
         if (!res.ok) {
           const reason = data?.error || `HTTP ${res.status}`;
           console.error("Failed to send media:", reason);
-          toast.error(`Failed to send: ${reason}`);
+          toast.error(t("inbox_message_thread.013", { reason }));
           onUpdateMessage(tempId, { status: "failed" });
           // The upload never reached the recipient — GC the orphaned
           // object rather than leaving it in the public bucket forever.
@@ -552,8 +554,8 @@ export function MessageThread({
         onUpdateMessage(tempId, { status: "sent" });
       } catch (err) {
         console.error("Failed to send media:", err);
-        const reason = err instanceof Error ? err.message : "network error";
-        toast.error(`Failed to send: ${reason}`);
+        const reason = err instanceof Error ? err.message: t("inbox_message_thread.011");
+        toast.error(t("inbox_message_thread.013", { reason }));
         onUpdateMessage(tempId, { status: "failed" });
         void deleteAccountMedia(CHAT_MEDIA_BUCKET, payload.path).catch(() => {});
       }
@@ -634,7 +636,7 @@ export function MessageThread({
         if (!res.ok) {
           const reason = payload?.error || `HTTP ${res.status}`;
           console.error("Failed to send template:", reason);
-          toast.error(`Failed to send template: ${reason}`);
+          toast.error(t("contacts_contact_detail_view.024", { reason: reason }));
           onUpdateMessage(tempId, { status: "failed" });
           return;
         }
@@ -642,8 +644,8 @@ export function MessageThread({
         onUpdateMessage(tempId, { status: "sent" });
       } catch (err) {
         console.error("Failed to send template:", err);
-        const reason = err instanceof Error ? err.message : "network error";
-        toast.error(`Failed to send template: ${reason}`);
+        const reason = err instanceof Error ? err.message: t("inbox_message_thread.011");
+        toast.error(t("contacts_contact_detail_view.024", { reason: reason }));
         onUpdateMessage(tempId, { status: "failed" });
       }
     },
@@ -671,7 +673,7 @@ export function MessageThread({
 
   const contactDisplayName = contact?.name || contact?.phone || "Customer";
 
-  // Author label for a quoted message: "You" when we sent the parent,
+  // Author label for a quoted message: t("inbox_message_thread.012") when we sent the parent,
   // contact name when the customer sent it.
   const authorLabelFor = useCallback(
     (m: Message): string => {
@@ -704,7 +706,7 @@ export function MessageThread({
         return;
       }
       if (messageId.startsWith("temp-")) {
-        toast.error("Wait for the message to finish sending");
+        toast.error(t("inbox_message_thread.014"));
         return;
       }
 
@@ -749,8 +751,8 @@ export function MessageThread({
           throw new Error(payload?.error || `HTTP ${res.status}`);
         }
       } catch (err) {
-        const reason = err instanceof Error ? err.message : "network error";
-        toast.error(`Reaction failed: ${reason}`);
+        const reason = err instanceof Error ? err.message: t("inbox_message_thread.011");
+        toast.error(t("inbox_message_thread.015", { reason: reason }));
         setReactions(snapshot);
       }
     },
@@ -769,7 +771,7 @@ export function MessageThread({
 
       if (error) {
         console.error("Failed to update assignment:", error);
-        toast.error("Failed to update assignment");
+        toast.error(t("inbox_message_thread.016"));
         return;
       }
 
@@ -787,12 +789,8 @@ export function MessageThread({
         <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">
           <MessageSquare className="h-8 w-8 text-muted-foreground" />
         </div>
-        <h3 className="mt-4 text-sm font-medium text-muted-foreground">
-          Select a conversation
-        </h3>
-        <p className="mt-1 text-xs text-muted-foreground">
-          Choose a conversation from the left to start messaging
-        </p>
+        <h3 className="mt-4 text-sm font-medium text-muted-foreground"><T k="inbox_contact_sidebar.001" /></h3>
+        <p className="mt-1 text-xs text-muted-foreground"><T k="inbox_message_thread.002" /></p>
       </div>
     );
   }
@@ -805,7 +803,7 @@ export function MessageThread({
   const assignedAgentId = conversation.assigned_agent_id ?? null;
   const currentAssignee = profiles.find((p) => p.user_id === assignedAgentId);
   const assignLabel = assignedAgentId
-    ? (currentAssignee?.full_name ?? "Assigned")
+    ? (currentAssignee?.full_name ?? t("inbox_message_thread.017"))
     : "Assign";
 
   return (
@@ -828,7 +826,7 @@ export function MessageThread({
             <button
               type="button"
               onClick={onBack}
-              aria-label="Back to conversations"
+              aria-label={t("inbox_message_thread.008")}
               className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground lg:hidden"
             >
               <ArrowLeft className="h-5 w-5" />
@@ -893,8 +891,8 @@ export function MessageThread({
               type="button"
               onClick={handleRefreshClick}
               disabled={isRefreshing}
-              aria-label="Refresh conversation"
-              title="Refresh"
+              aria-label={t("inbox_message_thread.009")}
+              title={t("inbox_message_thread.007")}
               className={cn(
                 "inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-60",
               )}
@@ -911,7 +909,7 @@ export function MessageThread({
                   "inline-flex items-center justify-center h-7 gap-1 px-2 text-xs rounded-md hover:bg-muted",
                   currentStatus?.color ?? "text-muted-foreground"
                 )}>
-                {currentStatus?.label ?? "Status"}
+                {currentStatus ? t(currentStatus.label) : t("inbox_message_thread.018")}
                 <ChevronDown className="h-3 w-3" />
             </DropdownMenuTrigger>
             <DropdownMenuContent
@@ -924,7 +922,7 @@ export function MessageThread({
                   onClick={() => handleStatusChange(opt.value)}
                   className={cn("text-sm", opt.color)}
                 >
-                  {opt.label}
+                  {t(opt.label)}
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
@@ -947,9 +945,7 @@ export function MessageThread({
               className="border-border bg-popover"
             >
               {profiles.length === 0 ? (
-                <DropdownMenuItem disabled className="text-sm text-muted-foreground">
-                  No teammates available
-                </DropdownMenuItem>
+                <DropdownMenuItem disabled className="text-sm text-muted-foreground"><T k="inbox_message_thread.003" /></DropdownMenuItem>
               ) : (
                 profiles.map((p) => {
                   const isSelected = p.user_id === assignedAgentId;
@@ -987,9 +983,7 @@ export function MessageThread({
                   <DropdownMenuItem
                     onClick={() => handleAssignChange(null)}
                     className="text-sm text-muted-foreground"
-                  >
-                    Unassign
-                  </DropdownMenuItem>
+                  ><T k="inbox_message_thread.004" /></DropdownMenuItem>
                 </>
               )}
             </DropdownMenuContent>
@@ -1002,13 +996,9 @@ export function MessageThread({
         {loading ? (
           <div className="flex items-center justify-center py-12">
             <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-          </div>
-        ) : messages.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-12">
-            <p className="text-sm text-muted-foreground">No messages yet</p>
-            <p className="text-xs text-muted-foreground">
-              Send a template to start the conversation
-            </p>
+          </div>) : messages.length === 0 ? (<div className="flex flex-col items-center justify-center py-12">
+            <p className="text-sm text-muted-foreground"><T k="inbox_message_thread.001" /></p>
+            <p className="text-xs text-muted-foreground"><T k="inbox_message_thread.006" /></p>
           </div>
         ) : (
           <div className="space-y-4">

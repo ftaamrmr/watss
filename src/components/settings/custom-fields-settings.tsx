@@ -12,6 +12,7 @@ import {
 import { CustomFieldsPanel } from '@/components/contacts/custom-fields-manager';
 import { SettingsChip } from './settings-chip';
 
+import { T } from "@/i18n/provider";
 /**
  * Settings → Custom Fields card. Manages the account-wide custom
  * contact field catalogue (the same panel the Contacts page exposes
@@ -23,12 +24,8 @@ export function CustomFieldsSettings() {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-foreground">
-          <SlidersHorizontal className="size-4 text-primary" />
-          Custom fields
-          <SettingsChip variant="admin" className="font-medium">
-            <Shield />
-            Admin
-          </SettingsChip>
+          <SlidersHorizontal className="size-4 text-primary" /><T k="dashboard_contacts_page.008" /><SettingsChip variant="admin" className="font-medium">
+            <Shield /><T k="layout_sidebar.006" /></SettingsChip>
         </CardTitle>
         <CardDescription className="text-muted-foreground">
           Extra contact fields (e.g. ZIP code, lead source). They appear on
