@@ -53,9 +53,7 @@ export default function ForgotPasswordPage() {
             </div>
             <CardTitle className="text-xl text-foreground"><T k="auth_forgot_password_page.002" /></CardTitle>
             <CardDescription className="text-muted-foreground">
-              We&apos;ve sent a password reset link to{" "}
-              <span className="text-foreground">{email}</span>. Please check your
-              inbox.
+              {t("auth_forgot_password_page.009", { email })}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -107,7 +105,7 @@ export default function ForgotPasswordPage() {
               disabled={loading}
               className="mt-2 h-10 w-full bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
             >
-              {loading ? "Sending..." : "Send reset link"}
+              {loading ? t("auth_forgot_password_page.007") : t("auth_forgot_password_page.008")}
             </Button>
           </form>
 

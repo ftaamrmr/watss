@@ -81,12 +81,12 @@ function LoginPageInner() {
             )}
           </div>
           <CardTitle className="text-xl text-foreground">
-            {inviteToken ? "Sign in to accept" : "Welcome back"}
+            {inviteToken ? t("auth_login_page.006") : t("auth_login_page.005")}
           </CardTitle>
           <CardDescription className="text-muted-foreground">
             {inviteToken
-              ? "Sign in and we'll take you to the invitation."
-              : "Sign in to your account"}
+              ? t("auth_login_page.007")
+              : t("auth_login_page.008")}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -134,12 +134,12 @@ function LoginPageInner() {
               disabled={loading}
               className="mt-2 h-10 w-full bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
             >
-              {loading ? "Signing in..." : "Sign in"}
+              {loading ? t("auth_login_page.009") : t("auth_login_page.010")}
             </Button>
           </form>
 
           <p className="mt-6 text-center text-sm text-muted-foreground">
-            Don&apos;t have an account?{" "}
+            {t("auth_login_page.011")}{" "}
             <Link
               href={
                 inviteToken

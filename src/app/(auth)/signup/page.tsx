@@ -52,12 +52,12 @@ function SignupPageInner() {
     setError(null);
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match");
+      setError(t("auth_signup_page.007"));
       return;
     }
 
     if (password.length < 6) {
-      setError("Password must be at least 6 characters");
+      setError(t("auth_signup_page.008"));
       return;
     }
 
@@ -102,9 +102,7 @@ function SignupPageInner() {
             </div>
             <CardTitle className="text-xl text-foreground"><T k="auth_forgot_password_page.002" /></CardTitle>
             <CardDescription className="text-muted-foreground">
-              We&apos;ve sent a confirmation link to{" "}
-              <span className="text-foreground">{email}</span>. Please check your
-              inbox and click the link to verify your account.
+              {t("auth_signup_page.009", { email })}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -138,12 +136,12 @@ function SignupPageInner() {
             )}
           </div>
           <CardTitle className="text-xl text-foreground">
-            {inviteToken ? "Create account & join" : "Create account"}
+            {inviteToken ? t("auth_signup_page.010") : t("auth_signup_page.011")}
           </CardTitle>
           <CardDescription className="text-muted-foreground">
             {inviteToken
-              ? "Verify your email, then accept the invitation to join your team."
-              : "Get started with CRM Template for WhatsApp"}
+              ? t("auth_signup_page.012")
+              : t("auth_signup_page.013")}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -211,12 +209,12 @@ function SignupPageInner() {
               disabled={loading}
               className="mt-2 h-10 w-full bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
             >
-              {loading ? "Creating account..." : "Create account"}
+              {loading ? t("auth_signup_page.014") : t("auth_signup_page.011")}
             </Button>
           </form>
 
           <p className="mt-6 text-center text-sm text-muted-foreground">
-            Already have an account?{" "}
+            {t("auth_signup_page.015")}{" "}
             <Link
               href={
                 inviteToken
