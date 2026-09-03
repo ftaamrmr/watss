@@ -40,7 +40,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { AUTOMATION_TEMPLATES, type TemplateSlug } from "@/lib/automations/templates"
-import { triggerMeta, formatRelative } from "@/lib/automations/trigger-meta"
+import { triggerMeta } from "@/lib/automations/trigger-meta"
 import { cn } from "@/lib/utils"
 
 import { T, useT } from "@/i18n/provider";
@@ -56,6 +56,32 @@ const TEMPLATE_ICON: Record<TemplateSlug, typeof Zap> = {
   out_of_office: Clock,
   lead_qualifier: Users,
   follow_up_reminder: PhoneCall,
+}
+
+/** Reuses the builder's trigger-name keys so the pills stay in sync. */
+const TRIGGER_LABEL_KEYS: Record<string, string> = {
+  new_message_received: "automations_automation_builder.063",
+  first_inbound_message: "automations_automation_builder.064",
+  keyword_match: "automations_automation_builder.065",
+  new_contact_created: "automations_automation_builder.066",
+  conversation_assigned: "automations_automation_builder.067",
+  tag_added: "automations_automation_builder.068",
+  time_based: "automations_automation_builder.069",
+}
+
+type TFn = (key: string, vars?: Record<string, string | number>) => string
+
+/** Localized variant of lib/automations/trigger-meta's formatRelative. */
+function relativeTime(iso: string | null | undefined, t: TFn): string {
+  if (!iso) return t("dashboard_automations_page.025")
+  const then = new Date(iso).getTime()
+  if (Number.isNaN(then)) return t("dashboard_automations_page.025")
+  const diffSec = Math.round((Date.now() - then) / 1000)
+  if (diffSec < 60) return t("dashboard_automations_page.026")
+  if (diffSec < 3600) return t("dashboard_automations_page.027", { m: Math.floor(diffSec / 60) })
+  if (diffSec < 86400) return t("dashboard_automations_page.028", { h: Math.floor(diffSec / 3600) })
+  if (diffSec < 2_592_000) return t("dashboard_automations_page.029", { d: Math.floor(diffSec / 86400) })
+  return new Date(iso).toLocaleDateString()
 }
 
 export default function AutomationsPage() {
@@ -104,7 +130,7 @@ export default function AutomationsPage() {
       toast.error(body?.error ?? t("dashboard_automations_page.019"))
       return
     }
-    toast.success(next ? "Automation activated" : "Automation paused")
+    toast.success(next ? t("dashboard_automations_page.022") : t("dashboard_automations_page.023"))
   }
 
   async function duplicate(a: Automation) {
@@ -177,7 +203,7 @@ export default function AutomationsPage() {
           <h2 className="mb-3 text-sm font-semibold text-muted-foreground"><T k="dashboard_automations_page.002" /></h2>
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
             {TEMPLATE_ORDER.map((slug) => {
-              const t = AUTOMATION_TEMPLATES[slug]
+              const tmpl = AUTOMATION_TEMPLATES[slug]
               const Icon = TEMPLATE_ICON[slug]
               return (
                 <button
@@ -188,8 +214,8 @@ export default function AutomationsPage() {
                   <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary group-hover:bg-primary/15">
                     <Icon className="h-5 w-5" />
                   </div>
-                  <div className="text-sm font-semibold text-foreground">{t.name}</div>
-                  <p className="mt-1 text-xs text-muted-foreground">{t.description}</p>
+                  <div className="text-sm font-semibold text-foreground">{t(`automations_templates.${slug}_name`)}</div>
+                  <p className="mt-1 text-xs text-muted-foreground">{t(`automations_templates.${slug}_desc`)}</p>
                 </button>
               )
             })}
@@ -226,9 +252,7 @@ export default function AutomationsPage() {
           <DialogHeader>
             <DialogTitle><T k="dashboard_automations_page.004" /></DialogTitle>
             <DialogDescription>
-              This permanently removes{" "}
-              <span className="text-foreground">{pendingDelete?.name}</span> and its execution
-              history. This cannot be undone.
+              {t("dashboard_automations_page.024", { name: pendingDelete?.name ?? "" })}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -243,7 +267,7 @@ export default function AutomationsPage() {
               disabled={deleting}
             >
               {deleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
-              Delete
+              <T k="dashboard_automations_page.013" />
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -305,13 +329,16 @@ function AutomationCard({
                 meta.pillClass,
               )}
             >
-              {meta.label}
+              {t(TRIGGER_LABEL_KEYS[automation.trigger_type] ?? "") || meta.label}
             </span>
             <span className="tabular-nums">
-              {automation.execution_count} run{automation.execution_count === 1 ? "" : "s"}
+              {automation.execution_count}{" "}
+              {automation.execution_count === 1
+                ? t("dashboard_automations_page.031")
+                : t("dashboard_automations_page.032")}
             </span>
             <span aria-hidden>·</span>
-            <span>last {formatRelative(automation.last_executed_at)}</span>
+            <span>{t("dashboard_automations_page.030", { time: relativeTime(automation.last_executed_at, t) })}</span>
           </div>
         </button>
 
@@ -319,7 +346,7 @@ function AutomationCard({
           <Switch
             checked={automation.is_active}
             onCheckedChange={(v) => onToggle(!!v)}
-            aria-label={automation.is_active ? "Deactivate" : "Activate"}
+            aria-label={automation.is_active ? t("dashboard_automations_page.034") : t("dashboard_automations_page.035")}
           />
 
           <DropdownMenu>
