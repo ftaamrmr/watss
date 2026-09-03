@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { FlowEditorShell } from "@/components/flows/flow-editor-shell";
 import type { FlowRow, FlowNodeRow } from "@/lib/flows/types";
 
-import { T } from "@/i18n/provider";
+import { T, useT } from "@/i18n/provider";
 /**
  * Flow editor shell.
  *
@@ -22,6 +22,7 @@ import { T } from "@/i18n/provider";
  * "Flow not found" state below.
  */
 export default function FlowEditorPage() {
+  const { t } = useT();
   const router = useRouter();
   const params = useParams<{ id: string }>();
 
@@ -52,7 +53,7 @@ export default function FlowEditorPage() {
       } catch (err) {
         if (!cancelled) {
           console.error(err);
-          toast.error("Couldn't load flow.");
+          toast.error(t("dashboard_flows_id_page.003"));
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -61,7 +62,7 @@ export default function FlowEditorPage() {
     return () => {
       cancelled = true;
     };
-  }, [params.id]);
+  }, [params.id, t]);
 
   if (loading) {
     return (
