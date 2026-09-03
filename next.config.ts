@@ -61,6 +61,10 @@ const SECURITY_HEADERS = [
 ] as const;
 
 const nextConfig: NextConfig = {
+  // Self-contained server bundle for Docker/Coolify deploys:
+  // `.next/standalone` ships its own minimal node_modules, so the
+  // runtime image doesn't need a full `npm install`.
+  output: "standalone",
   /**
    * Cache-Control policy.
    *
