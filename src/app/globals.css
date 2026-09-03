@@ -228,3 +228,13 @@ html[data-theme="rose"] {
     @apply font-sans;
   }
 }
+/* ===== i18n: Arabic / RTL support ===== */
+html[dir="rtl"],
+html[dir="rtl"] body {
+  font-family: var(--font-arabic), var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+html[dir="rtl"] .ltr-only {
+  direction: ltr;
+  unicode-bidi: embed;
+}

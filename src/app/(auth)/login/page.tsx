@@ -16,12 +16,14 @@ import {
 } from "@/components/ui/card";
 import { MessageSquare, UsersRound } from "lucide-react";
 
+import { T, useT } from "@/i18n/provider";
 // `useSearchParams` opts the component out of static prerendering
 // unless it sits under a Suspense boundary. We split the form into
 // a child component so the outer page can prerender the chrome
 // (background, card frame) while the form hydrates with the query
 // string on the client.
 export default function LoginPage() {
+  const { t } = useT();
   return (
     <Suspense fallback={null}>
       <LoginPageInner />
@@ -30,6 +32,7 @@ export default function LoginPage() {
 }
 
 function LoginPageInner() {
+  const { t } = useT();
   const searchParams = useSearchParams();
   // Forwarded from `/join/<token>` when the visitor already has an
   // account. After a successful sign-in we send them to the join
@@ -78,12 +81,12 @@ function LoginPageInner() {
             )}
           </div>
           <CardTitle className="text-xl text-foreground">
-            {inviteToken ? "Sign in to accept" : "Welcome back"}
+            {inviteToken ? t("auth_login_page.006") : t("auth_login_page.005")}
           </CardTitle>
           <CardDescription className="text-muted-foreground">
             {inviteToken
-              ? "Sign in and we'll take you to the invitation."
-              : "Sign in to your account"}
+              ? t("auth_login_page.007")
+              : t("auth_login_page.008")}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -95,13 +98,11 @@ function LoginPageInner() {
             )}
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="email" className="text-muted-foreground">
-                Email
-              </Label>
+              <Label htmlFor="email" className="text-muted-foreground"><T k="auth_forgot_password_page.005" /></Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="you@example.com"
+                placeholder={t("auth_forgot_password_page.006")}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -111,20 +112,16 @@ function LoginPageInner() {
 
             <div className="flex flex-col gap-2">
               <div className="flex items-center justify-between">
-                <Label htmlFor="password" className="text-muted-foreground">
-                  Password
-                </Label>
+                <Label htmlFor="password" className="text-muted-foreground"><T k="auth_login_page.001" /></Label>
                 <Link
                   href="/forgot-password"
                   className="text-sm text-primary hover:text-primary/80"
-                >
-                  Forgot password?
-                </Link>
+                ><T k="auth_login_page.002" /></Link>
               </div>
               <Input
                 id="password"
                 type="password"
-                placeholder="Enter your password"
+                placeholder={t("auth_login_page.004")}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -137,12 +134,12 @@ function LoginPageInner() {
               disabled={loading}
               className="mt-2 h-10 w-full bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
             >
-              {loading ? "Signing in..." : "Sign in"}
+              {loading ? t("auth_login_page.009") : t("auth_login_page.010")}
             </Button>
           </form>
 
           <p className="mt-6 text-center text-sm text-muted-foreground">
-            Don&apos;t have an account?{" "}
+            {t("auth_login_page.011")}{" "}
             <Link
               href={
                 inviteToken
@@ -150,9 +147,7 @@ function LoginPageInner() {
                   : "/signup"
               }
               className="text-primary hover:text-primary/80"
-            >
-              Create account
-            </Link>
+            ><T k="auth_login_page.003" /></Link>
           </p>
         </CardContent>
       </Card>

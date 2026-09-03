@@ -16,6 +16,7 @@ import { cn } from '@/lib/utils'
 import { EmptyState } from './empty-state'
 import { Skeleton } from './skeleton'
 
+import { T, useT } from "@/i18n/provider";
 interface ActivityFeedProps {
   items: ActivityItem[] | null
   loading: boolean
@@ -39,6 +40,7 @@ const KIND_THEME: Record<ActivityKind, KindTheme> = {
 }
 
 export function ActivityFeed({ items, loading }: ActivityFeedProps) {
+  const { t } = useT();
   // Start at 5 — a quick scan of the most recent events without
   // dominating vertical real estate. User expands explicitly via the
   // footer control when they want deeper history.
@@ -56,13 +58,11 @@ export function ActivityFeed({ items, loading }: ActivityFeedProps) {
   return (
     <section className="rounded-xl border border-border bg-card">
       <header className="flex items-center justify-between border-b border-border px-5 py-4">
-        <h2 className="text-sm font-semibold text-foreground">Recent Activity</h2>
+        <h2 className="text-sm font-semibold text-foreground"><T k="dashboard_activity_feed.001" /></h2>
         <Link
           href="/inbox"
           className="text-xs font-medium text-primary hover:text-primary/80"
-        >
-          View all →
-        </Link>
+        ><T k="dashboard_activity_feed.003" /></Link>
       </header>
 
       {loading || !items ? (
@@ -70,13 +70,11 @@ export function ActivityFeed({ items, loading }: ActivityFeedProps) {
           {Array.from({ length: 5 }).map((_, i) => (
             <Skeleton key={i} className="h-10 w-full" />
           ))}
-        </div>
-      ) : items.length === 0 ? (
-        <div className="p-5">
+        </div>) : items.length === 0 ? (<div className="p-5">
           <EmptyState
             icon={Inbox}
-            title="No activity yet"
-            hint="Activity from messages, deals, broadcasts, and automations will appear here."
+            title={t("dashboard_activity_feed.005")}
+            hint={t("dashboard_activity_feed.006")}
           />
         </div>
       ) : (
@@ -126,7 +124,7 @@ export function ActivityFeed({ items, loading }: ActivityFeedProps) {
               {totalLoaded === 50 ? '+' : ''}
             </span>
             <div className="flex items-center gap-1">
-              <span className="mr-1 text-muted-foreground">Show</span>
+              <span className="mr-1 text-muted-foreground"><T k="dashboard_activity_feed.002" /></span>
               {PAGE_SIZES.map((size, i) => {
                 const disabled = !isSizeUseful(size, i)
                 return (

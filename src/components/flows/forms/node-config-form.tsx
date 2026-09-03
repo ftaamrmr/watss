@@ -49,6 +49,7 @@ import { uploadAccountMedia, MEDIA_MAX_BYTES } from "@/lib/storage/upload-media"
 import { slugify, type BuilderNode } from "../shared";
 import { NextNodeRow, NodeKeySelect, TextRow } from "./fields";
 
+import { T, useT } from "@/i18n/provider";
 interface NodeConfigFormProps {
   node: BuilderNode;
   allNodes: BuilderNode[];
@@ -62,6 +63,7 @@ export function NodeConfigForm({
   showAdvanced,
   onUpdateConfig,
 }: NodeConfigFormProps) {
+  const { t } = useT();
   const cfg = node.config;
   switch (node.node_type) {
     case "start":
@@ -71,7 +73,7 @@ export function NodeConfigForm({
           allNodes={allNodes}
           currentKey={node.node_key}
           onChange={(v) => onUpdateConfig({ next_node_key: v })}
-          label="Advances to"
+          label={t("flows_forms_node_config_form.038")}
         />
       );
 
@@ -79,7 +81,7 @@ export function NodeConfigForm({
       return (
         <>
           <TextRow
-            label="Text sent to the customer"
+            label={t("flows_forms_node_config_form.039")}
             value={(cfg as { text?: string }).text ?? ""}
             onChange={(v) => onUpdateConfig({ text: v })}
           />
@@ -88,7 +90,7 @@ export function NodeConfigForm({
             allNodes={allNodes}
             currentKey={node.node_key}
             onChange={(v) => onUpdateConfig({ next_node_key: v })}
-            label="Advances to"
+            label={t("flows_forms_node_config_form.038")}
           />
         </>
       );
@@ -129,15 +131,13 @@ export function NodeConfigForm({
       return (
         <>
           <TextRow
-            label="Prompt sent to the customer"
+            label={t("flows_forms_node_config_form.040")}
             value={(cfg as { prompt_text?: string }).prompt_text ?? ""}
             onChange={(v) => onUpdateConfig({ prompt_text: v })}
             rows={2}
           />
           <div>
-            <label className="mb-1 block text-xs text-muted-foreground">
-              Variable key (stored in flow_runs.vars; alphanumeric + underscore)
-            </label>
+            <label className="mb-1 block text-xs text-muted-foreground"><T k="flows_forms_node_config_form.016" /></label>
             <Input
               value={(cfg as { var_key?: string }).var_key ?? ""}
               onChange={(e) =>
@@ -145,7 +145,7 @@ export function NodeConfigForm({
                   var_key: e.target.value.replace(/[^a-zA-Z0-9_]/g, ""),
                 })
               }
-              placeholder="e.g. name, email, company"
+              placeholder={t("flows_forms_node_config_form.027")}
               className="bg-muted font-mono text-xs"
             />
             <p className="mt-1 text-[10px] text-muted-foreground">
@@ -163,7 +163,7 @@ export function NodeConfigForm({
             allNodes={allNodes}
             currentKey={node.node_key}
             onChange={(v) => onUpdateConfig({ next_node_key: v })}
-            label="After capturing, advance to"
+            label={t("flows_forms_node_config_form.041")}
           />
         </>
       );
@@ -191,7 +191,7 @@ export function NodeConfigForm({
     case "handoff":
       return (
         <TextRow
-          label="Internal note (for the agent picking up)"
+          label={t("flows_forms_node_config_form.042")}
           value={(cfg as { note?: string }).note ?? ""}
           onChange={(v) => onUpdateConfig({ note: v })}
           rows={2}
@@ -201,8 +201,7 @@ export function NodeConfigForm({
     case "end":
       return (
         <p className="text-xs text-muted-foreground">
-          Terminal node. When the runner reaches this node the run is marked
-          complete. No config needed.
+          <T k="flows_forms_node_config_form.055" />
         </p>
       );
   }
@@ -231,6 +230,7 @@ function SendButtonsForm({
   onUpdateConfig: (patch: Record<string, unknown>) => void;
   showAdvanced: boolean;
 }) {
+  const { t } = useT();
   const buttons = cfg.buttons ?? [];
   const updateButton = (
     idx: number,
@@ -246,7 +246,7 @@ function SendButtonsForm({
         ...buttons,
         {
           reply_id: `btn_${buttons.length + 1}`,
-          title: "Option",
+          title: t("flows_forms_node_config_form.051"),
           next_node_key: "",
         },
       ],
@@ -257,21 +257,19 @@ function SendButtonsForm({
   return (
     <>
       <TextRow
-        label="Body text"
+        label={t("flows_forms_node_config_form.043")}
         value={cfg.text ?? ""}
         onChange={(v) => onUpdateConfig({ text: v })}
         rows={3}
       />
       <TextRow
-        label="Footer (optional, 60 chars)"
+        label={t("flows_forms_node_config_form.044")}
         value={cfg.footer_text ?? ""}
         onChange={(v) => onUpdateConfig({ footer_text: v })}
       />
       <div>
         <div className="mb-2 flex items-center justify-between">
-          <label className="text-xs text-muted-foreground">
-            Buttons (1–3) — each one routes to a different next node
-          </label>
+          <label className="text-xs text-muted-foreground"><T k="flows_forms_node_config_form.017" /></label>
         </div>
         <div className="flex flex-col gap-3">
           {buttons.map((b, i) => (
@@ -292,14 +290,14 @@ function SendButtonsForm({
                       reply_id: slugify(e.target.value, `btn_${i + 1}`),
                     })
                   }
-                  placeholder="reply_id"
+                  placeholder={t("flows_forms_node_config_form.028")}
                   className="bg-muted font-mono text-xs"
                 />
               )}
               <Input
                 value={b.title}
                 onChange={(e) => updateButton(i, { title: e.target.value })}
-                placeholder="Visible title (≤20 chars)"
+                placeholder={t("flows_forms_node_config_form.029")}
                 className="bg-muted"
                 maxLength={20}
               />
@@ -308,7 +306,7 @@ function SendButtonsForm({
                 nodes={allNodes}
                 excludeKey={currentKey}
                 onChange={(v) => updateButton(i, { next_node_key: v ?? "" })}
-                placeholder="Next node…"
+                placeholder={t("flows_forms_node_config_form.030")}
               />
               <Button
                 variant="ghost"
@@ -328,9 +326,7 @@ function SendButtonsForm({
             onClick={addButton}
             className="mt-2"
           >
-            <Plus className="h-3.5 w-3.5" />
-            Add button
-          </Button>
+            <Plus className="h-3.5 w-3.5" /><T k="flows_forms_node_config_form.018" /></Button>
         )}
       </div>
     </>
@@ -369,6 +365,7 @@ function SendListForm({
   onUpdateConfig: (patch: Record<string, unknown>) => void;
   showAdvanced: boolean;
 }) {
+  const { t } = useT();
   const sections = cfg.sections ?? [];
   const totalRows = sections.reduce((sum, s) => sum + s.rows.length, 0);
 
@@ -446,28 +443,26 @@ function SendListForm({
   return (
     <>
       <TextRow
-        label="Body text"
+        label={t("flows_forms_node_config_form.043")}
         value={cfg.text ?? ""}
         onChange={(v) => onUpdateConfig({ text: v })}
         rows={3}
       />
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
         <TextRow
-          label="Tap-to-expand button label (≤20 chars)"
+          label={t("flows_forms_node_config_form.045")}
           value={cfg.button_label ?? ""}
           onChange={(v) => onUpdateConfig({ button_label: v })}
         />
         <TextRow
-          label="Footer (optional, 60 chars)"
+          label={t("flows_forms_node_config_form.044")}
           value={cfg.footer_text ?? ""}
           onChange={(v) => onUpdateConfig({ footer_text: v })}
         />
       </div>
 
       <div className="mt-2">
-        <label className="mb-2 block text-xs text-muted-foreground">
-          Rows (1–10 total across all sections)
-        </label>
+        <label className="mb-2 block text-xs text-muted-foreground"><T k="flows_forms_node_config_form.019" /></label>
         {sections.map((section, sIdx) => (
           <div
             key={sIdx}
@@ -488,7 +483,7 @@ function SendListForm({
                   size="sm"
                   onClick={() => removeSection(sIdx)}
                   className="shrink-0 text-red-400 hover:bg-red-500/10 hover:text-red-300"
-                  aria-label="Remove section"
+                  aria-label={t("flows_forms_node_config_form.036")}
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                 </Button>
@@ -515,7 +510,7 @@ function SendListForm({
                         ),
                       })
                     }
-                    placeholder="reply_id"
+                    placeholder={t("flows_forms_node_config_form.028")}
                     className="bg-muted font-mono text-xs"
                   />
                 )}
@@ -524,7 +519,7 @@ function SendListForm({
                   onChange={(e) =>
                     updateRow(sIdx, rIdx, { title: e.target.value })
                   }
-                  placeholder="Row title (≤24)"
+                  placeholder={t("flows_forms_node_config_form.031")}
                   className="bg-muted"
                   maxLength={24}
                 />
@@ -535,7 +530,7 @@ function SendListForm({
                   onChange={(v) =>
                     updateRow(sIdx, rIdx, { next_node_key: v ?? "" })
                   }
-                  placeholder="Next node…"
+                  placeholder={t("flows_forms_node_config_form.030")}
                 />
                 <Button
                   variant="ghost"
@@ -554,9 +549,7 @@ function SendListForm({
                 onClick={() => addRow(sIdx)}
                 className="mt-1"
               >
-                <Plus className="h-3.5 w-3.5" />
-                Add row
-              </Button>
+                <Plus className="h-3.5 w-3.5" /><T k="flows_forms_node_config_form.020" /></Button>
             )}
           </div>
         ))}
@@ -565,9 +558,7 @@ function SendListForm({
             scannable menu. */}
         {sections.length < 10 && (
           <Button variant="outline" size="sm" onClick={addSection}>
-            <Plus className="h-3.5 w-3.5" />
-            Add section
-          </Button>
+            <Plus className="h-3.5 w-3.5" /><T k="flows_forms_node_config_form.021" /></Button>
         )}
       </div>
     </>
@@ -604,6 +595,7 @@ function ConditionForm({
   currentKey: string;
   onUpdateConfig: (patch: Record<string, unknown>) => void;
 }) {
+  const { t } = useT();
   const tags = useUserTags();
 
   const subject = cfg.subject ?? "var";
@@ -614,7 +606,7 @@ function ConditionForm({
     <>
       <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
         <div>
-          <label className="mb-1 block text-xs text-muted-foreground">If</label>
+          <label className="mb-1 block text-xs text-muted-foreground"><T k="flows_forms_node_config_form.001" /></label>
           <Select
             value={subject}
             onValueChange={(v) =>
@@ -625,9 +617,9 @@ function ConditionForm({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="var">Captured variable</SelectItem>
-              <SelectItem value="tag">Contact has tag</SelectItem>
-              <SelectItem value="contact_field">Contact field</SelectItem>
+              <SelectItem value="var"><T k="flows_forms_node_config_form.002" /></SelectItem>
+              <SelectItem value="tag"><T k="flows_forms_node_config_form.003" /></SelectItem>
+              <SelectItem value="contact_field"><T k="automations_automation_builder.014" /></SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -645,7 +637,7 @@ function ConditionForm({
               onValueChange={(v) => onUpdateConfig({ subject_key: v })}
             >
               <SelectTrigger className="bg-muted">
-                <SelectValue placeholder="Pick a tag…" />
+                <SelectValue placeholder={t("flows_forms_node_config_form.032")} />
               </SelectTrigger>
               <SelectContent>
                 {tags.map((t) => (
@@ -654,20 +646,18 @@ function ConditionForm({
                   </SelectItem>
                 ))}
               </SelectContent>
-            </Select>
-          ) : subject === "contact_field" ? (
-            <Select
+            </Select>) : subject === "contact_field" ? (<Select
               value={cfg.subject_key ?? ""}
               onValueChange={(v) => onUpdateConfig({ subject_key: v })}
             >
               <SelectTrigger className="bg-muted">
-                <SelectValue placeholder="Pick a field…" />
+                <SelectValue placeholder={t("flows_forms_node_config_form.033")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="name">name</SelectItem>
-                <SelectItem value="email">email</SelectItem>
-                <SelectItem value="phone">phone</SelectItem>
-                <SelectItem value="company">company</SelectItem>
+                <SelectItem value="name"><T k="contacts_import_modal.004" /></SelectItem>
+                <SelectItem value="email"><T k="contacts_import_modal.005" /></SelectItem>
+                <SelectItem value="phone"><T k="contacts_import_modal.003" /></SelectItem>
+                <SelectItem value="company"><T k="contacts_import_modal.006" /></SelectItem>
               </SelectContent>
             </Select>
           ) : (
@@ -690,7 +680,7 @@ function ConditionForm({
         )}
       >
         <div>
-          <label className="mb-1 block text-xs text-muted-foreground">Operator</label>
+          <label className="mb-1 block text-xs text-muted-foreground"><T k="flows_forms_node_config_form.004" /></label>
           <Select
             value={operator}
             onValueChange={(v) =>
@@ -701,16 +691,16 @@ function ConditionForm({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="present">is present</SelectItem>
-              <SelectItem value="absent">is absent</SelectItem>
-              <SelectItem value="equals">equals</SelectItem>
-              <SelectItem value="contains">contains</SelectItem>
+              <SelectItem value="present"><T k="flows_forms_node_config_form.005" /></SelectItem>
+              <SelectItem value="absent"><T k="flows_forms_node_config_form.006" /></SelectItem>
+              <SelectItem value="equals"><T k="flows_forms_node_config_form.007" /></SelectItem>
+              <SelectItem value="contains"><T k="flows_forms_node_config_form.008" /></SelectItem>
             </SelectContent>
           </Select>
         </div>
         {showValue && (
           <div>
-            <label className="mb-1 block text-xs text-muted-foreground">Value</label>
+            <label className="mb-1 block text-xs text-muted-foreground"><T k="automations_automation_builder.044" /></label>
             <Input
               value={cfg.value ?? ""}
               onChange={(e) => onUpdateConfig({ value: e.target.value })}
@@ -726,14 +716,14 @@ function ConditionForm({
           allNodes={allNodes}
           currentKey={currentKey}
           onChange={(v) => onUpdateConfig({ true_next: v })}
-          label="If true → advance to"
+          label={t("flows_forms_node_config_form.046")}
         />
         <NextNodeRow
           value={cfg.false_next ?? ""}
           allNodes={allNodes}
           currentKey={currentKey}
           onChange={(v) => onUpdateConfig({ false_next: v })}
-          label="If false → advance to"
+          label={t("flows_forms_node_config_form.047")}
         />
       </div>
     </>
@@ -761,13 +751,14 @@ function SetTagForm({
   currentKey: string;
   onUpdateConfig: (patch: Record<string, unknown>) => void;
 }) {
+  const { t } = useT();
   const tags = useUserTags();
 
   return (
     <>
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
         <div>
-          <label className="mb-1 block text-xs text-muted-foreground">Action</label>
+          <label className="mb-1 block text-xs text-muted-foreground"><T k="flows_forms_node_config_form.009" /></label>
           <Select
             value={cfg.mode ?? "add"}
             onValueChange={(v) =>
@@ -778,20 +769,20 @@ function SetTagForm({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="add">Add tag</SelectItem>
-              <SelectItem value="remove">Remove tag</SelectItem>
+              <SelectItem value="add"><T k="flows_forms_node_config_form.010" /></SelectItem>
+              <SelectItem value="remove"><T k="flows_forms_node_config_form.011" /></SelectItem>
             </SelectContent>
           </Select>
         </div>
         <div>
-          <label className="mb-1 block text-xs text-muted-foreground">Tag</label>
+          <label className="mb-1 block text-xs text-muted-foreground"><T k="automations_automation_builder.018" /></label>
           {tags.length > 0 ? (
             <Select
               value={cfg.tag_id ?? ""}
               onValueChange={(v) => onUpdateConfig({ tag_id: v })}
             >
               <SelectTrigger className="bg-muted">
-                <SelectValue placeholder="Pick a tag…" />
+                <SelectValue placeholder={t("flows_forms_node_config_form.032")} />
               </SelectTrigger>
               <SelectContent>
                 {tags.map((t) => (
@@ -805,7 +796,7 @@ function SetTagForm({
             <Input
               value={cfg.tag_id ?? ""}
               onChange={(e) => onUpdateConfig({ tag_id: e.target.value })}
-              placeholder="Tag UUID"
+              placeholder={t("flows_forms_node_config_form.034")}
               className="bg-muted font-mono text-xs"
             />
           )}
@@ -816,7 +807,7 @@ function SetTagForm({
         allNodes={allNodes}
         currentKey={currentKey}
         onChange={(v) => onUpdateConfig({ next_node_key: v })}
-        label="Then advance to"
+        label={t("flows_forms_node_config_form.048")}
       />
     </>
   );
@@ -884,6 +875,7 @@ function SendMediaForm({
   currentKey: string;
   onUpdateConfig: (patch: Record<string, unknown>) => void;
 }) {
+  const { t } = useT();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
 
@@ -896,9 +888,7 @@ function SendMediaForm({
   const handleFile = useCallback(
     async (file: File) => {
       if (file.size > MEDIA_MAX_BYTES) {
-        toast.error(
-          `File is ${(file.size / 1024 / 1024).toFixed(1)} MB — limit is 16 MB.`,
-        );
+        toast.error(t("flows_forms_node_config_form.053", { size: (file.size / 1024 / 1024).toFixed(1) }));
         return;
       }
       setUploading(true);
@@ -912,9 +902,9 @@ function SendMediaForm({
           media_url: publicUrl,
           filename: file.name,
         });
-        toast.success("File uploaded.");
+        toast.success(t("flows_forms_node_config_form.054"));
       } catch (err) {
-        const msg = err instanceof Error ? err.message : "Upload failed.";
+        const msg = err instanceof Error ? err.message: t("flows_forms_node_config_form.052");
         toast.error(msg);
       } finally {
         setUploading(false);
@@ -930,7 +920,7 @@ function SendMediaForm({
   return (
     <>
       <div>
-        <label className="mb-1 block text-xs text-muted-foreground">Media type</label>
+        <label className="mb-1 block text-xs text-muted-foreground"><T k="flows_forms_node_config_form.012" /></label>
         <Select
           value={mediaType}
           onValueChange={(v) => {
@@ -948,17 +938,15 @@ function SendMediaForm({
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="image">Image (PNG, JPEG, WebP)</SelectItem>
-            <SelectItem value="video">Video (MP4, 3GP)</SelectItem>
-            <SelectItem value="document">
-              Document (PDF, Word, Excel, PowerPoint, TXT)
-            </SelectItem>
+            <SelectItem value="image"><T k="flows_forms_node_config_form.013" /></SelectItem>
+            <SelectItem value="video"><T k="flows_forms_node_config_form.014" /></SelectItem>
+            <SelectItem value="document"><T k="flows_forms_node_config_form.023" /></SelectItem>
           </SelectContent>
         </Select>
       </div>
 
       <div>
-        <label className="mb-1 block text-xs text-muted-foreground">File</label>
+        <label className="mb-1 block text-xs text-muted-foreground"><T k="flows_forms_node_config_form.015" /></label>
         {cfg.media_url ? (
           <div className="flex items-center gap-2 rounded-md border border-border bg-muted px-3 py-2 text-xs">
             <Paperclip className="h-3.5 w-3.5 shrink-0 text-cyan-400" />
@@ -975,7 +963,7 @@ function SendMediaForm({
               type="button"
               onClick={handleClear}
               className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
-              aria-label="Remove file"
+              aria-label={t("flows_forms_node_config_form.037")}
               disabled={uploading}
             >
               <X className="h-3.5 w-3.5" />
@@ -990,14 +978,10 @@ function SendMediaForm({
           >
             {uploading ? (
               <>
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                Uploading…
-              </>
+                <Loader2 className="h-3.5 w-3.5 animate-spin" /><T k="flows_forms_node_config_form.024" /></>
             ) : (
               <>
-                <Upload className="h-3.5 w-3.5" />
-                Click to upload (max 16 MB)
-              </>
+                <Upload className="h-3.5 w-3.5" /><T k="flows_forms_node_config_form.025" /></>
             )}
           </button>
         )}
@@ -1016,7 +1000,7 @@ function SendMediaForm({
       </div>
 
       <TextRow
-        label="Caption (optional, shown under the media)"
+        label={t("flows_forms_node_config_form.049")}
         value={cfg.caption ?? ""}
         onChange={(v) => onUpdateConfig({ caption: v })}
         rows={2}
@@ -1024,13 +1008,11 @@ function SendMediaForm({
 
       {isDocument && (
         <div>
-          <label className="mb-1 block text-xs text-muted-foreground">
-            Filename shown to the customer (documents only)
-          </label>
+          <label className="mb-1 block text-xs text-muted-foreground"><T k="flows_forms_node_config_form.026" /></label>
           <Input
             value={cfg.filename ?? ""}
             onChange={(e) => onUpdateConfig({ filename: e.target.value })}
-            placeholder="invoice.pdf"
+            placeholder={t("flows_forms_node_config_form.035")}
             className="bg-muted text-xs"
           />
         </div>
@@ -1041,7 +1023,7 @@ function SendMediaForm({
         allNodes={allNodes}
         currentKey={currentKey}
         onChange={(v) => onUpdateConfig({ next_node_key: v })}
-        label="After sending, advance to"
+        label={t("flows_forms_node_config_form.050")}
       />
     </>
   );

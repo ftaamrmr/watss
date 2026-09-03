@@ -39,6 +39,7 @@ import {
   getRecipientStatus,
 } from '@/lib/broadcast-status';
 
+import { T, useT } from "@/i18n/provider";
 interface StatCardProps {
   label: string;
   value: number;
@@ -48,6 +49,7 @@ interface StatCardProps {
 }
 
 function StatCard({ label, value, total, icon, color }: StatCardProps) {
+  const { t } = useT();
   const pct = total > 0 ? Math.round((value / total) * 100) : 0;
   return (
     <div className="rounded-xl border border-border bg-card p-4">
@@ -75,10 +77,11 @@ interface FunnelStep {
  * always render a full bar at the top and proportional tails.
  */
 function FunnelChart({ steps }: { steps: FunnelStep[] }) {
+  const { t } = useT();
   const max = Math.max(...steps.map((s) => s.value), 1);
   return (
     <div className="rounded-xl border border-border bg-card p-4">
-      <h3 className="mb-4 text-sm font-medium text-foreground">Funnel</h3>
+      <h3 className="mb-4 text-sm font-medium text-foreground"><T k="dashboard_broadcasts_id_page.001" /></h3>
       <div className="space-y-2">
         {steps.map((step) => {
           const pctOfMax = Math.max(5, Math.round((step.value / max) * 100));
@@ -142,6 +145,7 @@ function downloadBlob(filename: string, content: string) {
 }
 
 export default function BroadcastDetailPage() {
+  const { t } = useT();
   const params = useParams();
   const router = useRouter();
   const broadcastId = params.id as string;
@@ -236,10 +240,10 @@ export default function BroadcastDetailPage() {
       .eq('id', broadcastId);
     setDeleting(false);
     if (delErr) {
-      toast.error(`Failed to delete: ${delErr.message}`);
+      toast.error(t("dashboard_broadcasts_id_page.016", { message: delErr.message }));
       return;
     }
-    toast.success('Broadcast deleted');
+    toast.success(t("dashboard_broadcasts_id_page.017"));
     router.push('/broadcasts');
   }
 
@@ -255,9 +259,7 @@ export default function BroadcastDetailPage() {
     return (
       <div className="flex h-64 flex-col items-center justify-center gap-2">
         <p className="text-sm text-red-400">{error ?? 'Broadcast not found'}</p>
-        <Button variant="outline" onClick={() => router.push('/broadcasts')}>
-          Back to Broadcasts
-        </Button>
+        <Button variant="outline" onClick={() => router.push('/broadcasts')}><T k="dashboard_broadcasts_id_page.010" /></Button>
       </div>
     );
   }
@@ -309,16 +311,14 @@ export default function BroadcastDetailPage() {
             funnel inconsistent. */}
         {confirmDelete ? (
           <div className="flex items-center gap-2 rounded-md border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-sm">
-            <span className="text-red-300">Delete this broadcast?</span>
+            <span className="text-red-300"><T k="dashboard_broadcasts_id_page.002" /></span>
             <Button
               variant="outline"
               size="sm"
               onClick={() => setConfirmDelete(false)}
               disabled={deleting}
               className="h-7 border-border bg-transparent text-muted-foreground hover:bg-muted"
-            >
-              Cancel
-            </Button>
+            ><T k="dashboard_automations_page.009" /></Button>
             <Button
               size="sm"
               onClick={handleDelete}
@@ -341,51 +341,49 @@ export default function BroadcastDetailPage() {
             }
             className="border-red-500/30 bg-transparent text-red-400 hover:bg-red-500/10 disabled:opacity-40"
           >
-            <Trash2 className="h-3.5 w-3.5" />
-            Delete
-          </Button>
+            <Trash2 className="h-3.5 w-3.5" /><T k="dashboard_automations_page.013" /></Button>
         )}
       </div>
 
       {/* Stats — 6 cards: Total / Sent / Delivered / Read / Replied / Failed */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
         <StatCard
-          label="Total Recipients"
+          label={t("dashboard_broadcasts_id_page.013")}
           value={broadcast.total_recipients}
           total={broadcast.total_recipients}
           icon={<Users className="h-4 w-4" />}
           color="bg-muted text-muted-foreground"
         />
         <StatCard
-          label="Sent"
+          label={t("dashboard_broadcasts_id_page.006")}
           value={broadcast.sent_count}
           total={broadcast.total_recipients}
           icon={<Send className="h-4 w-4" />}
           color="bg-primary/10 text-primary"
         />
         <StatCard
-          label="Delivered"
+          label={t("dashboard_broadcasts_id_page.007")}
           value={broadcast.delivered_count}
           total={broadcast.total_recipients}
           icon={<CheckCheck className="h-4 w-4" />}
           color="bg-teal-500/10 text-teal-400"
         />
         <StatCard
-          label="Read"
+          label={t("dashboard_broadcasts_id_page.008")}
           value={broadcast.read_count}
           total={broadcast.total_recipients}
           icon={<Eye className="h-4 w-4" />}
           color="bg-blue-500/10 text-blue-400"
         />
         <StatCard
-          label="Replied"
+          label={t("dashboard_broadcasts_id_page.014")}
           value={broadcast.replied_count}
           total={broadcast.total_recipients}
           icon={<MessageCircle className="h-4 w-4" />}
           color="bg-indigo-500/10 text-indigo-400"
         />
         <StatCard
-          label="Failed"
+          label={t("dashboard_broadcasts_id_page.015")}
           value={broadcast.failed_count}
           total={broadcast.total_recipients}
           icon={<AlertCircle className="h-4 w-4" />}
@@ -425,9 +423,7 @@ export default function BroadcastDetailPage() {
                   className={
                     statusFilter === 'all' ? 'text-primary' : 'text-popover-foreground'
                   }
-                >
-                  All statuses
-                </DropdownMenuItem>
+                ><T k="dashboard_broadcasts_id_page.011" /></DropdownMenuItem>
                 {RECIPIENT_STATUSES.map((s) => (
                   <DropdownMenuItem
                     key={s}
@@ -451,9 +447,7 @@ export default function BroadcastDetailPage() {
               disabled={recipients.length === 0}
               className="border-border text-muted-foreground hover:bg-muted"
             >
-              <Download className="h-3.5 w-3.5" />
-              Export CSV
-            </Button>
+              <Download className="h-3.5 w-3.5" /><T k="dashboard_broadcasts_id_page.012" /></Button>
           </div>
         </div>
 
@@ -470,13 +464,13 @@ export default function BroadcastDetailPage() {
             <Table>
               <TableHeader>
                 <TableRow className="border-border hover:bg-transparent">
-                  <TableHead className="text-muted-foreground">Contact</TableHead>
-                  <TableHead className="text-muted-foreground">Phone</TableHead>
-                  <TableHead className="text-muted-foreground">Status</TableHead>
-                  <TableHead className="text-muted-foreground">Sent</TableHead>
-                  <TableHead className="text-muted-foreground">Delivered</TableHead>
-                  <TableHead className="text-muted-foreground">Read</TableHead>
-                  <TableHead className="text-muted-foreground">Error</TableHead>
+                  <TableHead className="text-muted-foreground"><T k="dashboard_broadcasts_id_page.003" /></TableHead>
+                  <TableHead className="text-muted-foreground"><T k="dashboard_broadcasts_id_page.004" /></TableHead>
+                  <TableHead className="text-muted-foreground"><T k="dashboard_broadcasts_id_page.005" /></TableHead>
+                  <TableHead className="text-muted-foreground"><T k="dashboard_broadcasts_id_page.006" /></TableHead>
+                  <TableHead className="text-muted-foreground"><T k="dashboard_broadcasts_id_page.007" /></TableHead>
+                  <TableHead className="text-muted-foreground"><T k="dashboard_broadcasts_id_page.008" /></TableHead>
+                  <TableHead className="text-muted-foreground"><T k="dashboard_broadcasts_id_page.009" /></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

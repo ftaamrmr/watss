@@ -6,6 +6,7 @@ import { formatCurrencyShort } from '@/lib/currency'
 import { EmptyState } from './empty-state'
 import { Skeleton } from './skeleton'
 
+import { T, useT } from "@/i18n/provider";
 interface PipelineDonutProps {
   data: PipelineDonutData | null
   loading: boolean
@@ -14,23 +15,20 @@ interface PipelineDonutProps {
 }
 
 export function PipelineDonut({ data, loading, currency }: PipelineDonutProps) {
+  const { t } = useT();
   return (
     <section className="flex h-full flex-col rounded-xl border border-border bg-card">
       <header className="border-b border-border px-5 py-4">
-        <h2 className="text-sm font-semibold text-foreground">Pipeline Value</h2>
-        <p className="mt-0.5 text-xs text-muted-foreground">
-          Open deals by stage
-        </p>
+        <h2 className="text-sm font-semibold text-foreground"><T k="dashboard_pipeline_donut.001" /></h2>
+        <p className="mt-0.5 text-xs text-muted-foreground"><T k="dashboard_pipeline_donut.002" /></p>
       </header>
 
       <div className="flex flex-1 flex-col p-5">
         {loading || !data ? (
-          <Skeleton className="h-56 w-full" />
-        ) : data.stages.length === 0 ? (
-          <EmptyState
+          <Skeleton className="h-56 w-full" />) : data.stages.length === 0 ? (<EmptyState
             icon={GitBranch}
-            title="No open deals yet"
-            hint="Create deals in Pipelines to see stage breakdowns here."
+            title={t("dashboard_pipeline_donut.005")}
+            hint={t("dashboard_pipeline_donut.007")}
           />
         ) : (
           <>
@@ -66,7 +64,9 @@ export function PipelineDonut({ data, loading, currency }: PipelineDonutProps) {
 // between segments are implied by a thin slate-900 stroke between
 // them for a cleaner look.
 // ------------------------------------------------------------
-function Donut({ data, currency }: { data: PipelineDonutData; currency: string }) {
+function Donut({ data, currency }: { data: PipelineDonutData;
+ currency: string }) {
+  const { t } = useT();
   const size = 200
   const r = 80
   const ringWidth = 18
@@ -96,7 +96,7 @@ function Donut({ data, currency }: { data: PipelineDonutData; currency: string }
 
   return (
     <div className="flex items-center justify-center">
-      <svg viewBox={`0 0 ${size} ${size}`} className="h-48 w-48" role="img" aria-label="Pipeline value by stage">
+      <svg viewBox={`0 0 ${size} ${size}`} className="h-48 w-48" role="img" aria-label={t("dashboard_pipeline_donut.006")}>
         {/* background ring */}
         <circle cx={cx} cy={cy} r={r} fill="none" stroke="var(--muted)" strokeWidth={ringWidth} />
         {segments.map((seg) => (
@@ -115,9 +115,7 @@ function Donut({ data, currency }: { data: PipelineDonutData; currency: string }
           y={cy - 6}
           textAnchor="middle"
           className="fill-muted-foreground text-[11px]"
-        >
-          Total
-        </text>
+        ><T k="dashboard_pipeline_donut.004" /></text>
         <text
           x={cx}
           y={cy + 14}

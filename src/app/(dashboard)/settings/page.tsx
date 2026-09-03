@@ -21,6 +21,7 @@ import {
   type SettingsSection,
 } from '@/components/settings/settings-sections';
 
+import { T } from "@/i18n/provider";
 export default function SettingsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -66,12 +67,9 @@ export default function SettingsPage() {
   return (
     <div>
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">
-          Settings
-        </h1>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground"><T k="dashboard_settings_page.001" /></h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Everything in one place — your account and your workspace. Pick a
-          section to manage it.
+          <T k="dashboard_settings_page.002" />
         </p>
       </div>
 

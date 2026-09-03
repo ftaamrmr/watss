@@ -17,9 +17,11 @@ import {
   CardDescription,
 } from '@/components/ui/card';
 
+import { T, useT } from "@/i18n/provider";
 const MIN_PASSWORD = 8;
 
 export function PasswordForm() {
+  const { t } = useT();
   const { profile } = useAuth();
   const supabase = createClient();
 
@@ -32,7 +34,7 @@ export function PasswordForm() {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!profile?.email) {
-      toast.error('Cannot change password without a current email');
+      toast.error(t("settings_password_form.005"));
       return;
     }
     if (next.length < MIN_PASSWORD) {
@@ -56,7 +58,7 @@ export function PasswordForm() {
         password: current,
       });
       if (signInError) {
-        toast.error('Current password is incorrect');
+        toast.error(t("settings_password_form.006"));
         return;
       }
 
@@ -64,14 +66,14 @@ export function PasswordForm() {
         password: next,
       });
       if (updateError) {
-        toast.error(`Password update failed: ${updateError.message}`);
+        toast.error(t("settings_password_form.007", { message: updateError.message }));
         return;
       }
 
       setCurrent('');
       setNext('');
       setConfirm('');
-      toast.success('Password updated');
+      toast.success(t("settings_password_form.008"));
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Unknown error';
       toast.error(msg);
@@ -84,9 +86,7 @@ export function PasswordForm() {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-foreground">
-          <KeyRound className="size-4 text-primary" />
-          Password
-        </CardTitle>
+          <KeyRound className="size-4 text-primary" /><T k="auth_login_page.001" /></CardTitle>
         <CardDescription className="text-muted-foreground">
           Use at least {MIN_PASSWORD} characters. You will stay signed in on
           this device after changing it.
@@ -96,9 +96,7 @@ export function PasswordForm() {
       <CardContent>
         <form onSubmit={onSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="current-password" className="text-foreground">
-              Current password
-            </Label>
+            <Label htmlFor="current-password" className="text-foreground"><T k="settings_password_form.001" /></Label>
             <Input
               id="current-password"
               type="password"
@@ -112,9 +110,7 @@ export function PasswordForm() {
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="new-password" className="text-foreground">
-                New password
-              </Label>
+              <Label htmlFor="new-password" className="text-foreground"><T k="settings_password_form.002" /></Label>
               <Input
                 id="new-password"
                 type="password"
@@ -127,9 +123,7 @@ export function PasswordForm() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="confirm-password" className="text-foreground">
-                Confirm new password
-              </Label>
+              <Label htmlFor="confirm-password" className="text-foreground"><T k="settings_password_form.003" /></Label>
               <Input
                 id="confirm-password"
                 type="password"
@@ -156,9 +150,7 @@ export function PasswordForm() {
             >
               {saving ? (
                 <>
-                  <Loader2 className="size-4 animate-spin" />
-                  Updating…
-                </>
+                  <Loader2 className="size-4 animate-spin" /><T k="settings_password_form.004" /></>
               ) : (
                 'Update password'
               )}

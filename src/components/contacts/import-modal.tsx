@@ -38,6 +38,7 @@ import {
   Tag,
 } from 'lucide-react';
 
+import { T, useT } from "@/i18n/provider";
 const DEFAULT_TAG_COLOR = '#3b82f6';
 const PREVIEW_LIMIT = 5;
 
@@ -58,6 +59,7 @@ function PreviewCell({
   mono?: boolean;
   maxWidth?: string;
 }) {
+  const { t } = useT();
   return (
     <span
       className={cn(
@@ -79,6 +81,7 @@ function ImportPreviewTags({
   tagNames: string[];
   tagColorByKey: Map<string, string>;
 }) {
+  const { t } = useT();
   if (tagNames.length === 0) {
     return <span className="text-muted-foreground">—</span>;
   }
@@ -123,6 +126,7 @@ export function ImportModal({
   onOpenChange,
   onImported,
 }: ImportModalProps) {
+  const { t } = useT();
   const supabase = createClient();
   const { accountId, canEditSettings } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -336,7 +340,7 @@ export function ImportModal({
           tagIdByKey
         );
       } catch {
-        toast.warning('Contacts imported, but some tag assignments failed.');
+        toast.warning(t("contacts_import_modal.010"));
       }
 
       setResult({ imported, skipped, failed, tagsAssigned });
@@ -355,9 +359,7 @@ export function ImportModal({
         const sample = skippedNames.slice(0, 3).join(', ');
         const more =
           skippedNames.length > 3 ? ` (+${skippedNames.length - 3} more)` : '';
-        toast.info(
-          `Unknown tags skipped (create them in Settings first): ${sample}${more}`
-        );
+        toast.info(t("contacts_import_modal.011", { sample, more }));
       }
       if (skipped > 0) {
         toast.info(`${skipped} duplicate${skipped !== 1 ? 's' : ''} skipped`);
@@ -401,30 +403,18 @@ export function ImportModal({
       <DialogContent className="flex max-h-[min(90vh,720px)] flex-col gap-0 overflow-hidden border-border/80 bg-popover p-0 text-popover-foreground sm:max-w-2xl">
         <div className="shrink-0 space-y-4 border-b border-border/80 px-6 pt-6 pb-5">
           <DialogHeader className="gap-1.5">
-            <DialogTitle className="text-lg text-popover-foreground">
-              Import Contacts
-            </DialogTitle>
+            <DialogTitle className="text-lg text-popover-foreground"><T k="contacts_import_modal.002" /></DialogTitle>
             <DialogDescription className="leading-relaxed text-muted-foreground">
               Upload a CSV with a required{' '}
-              <code className="rounded bg-muted px-1 py-0.5 text-[11px] text-muted-foreground">
-                phone
-              </code>{' '}
+              <code className="rounded bg-muted px-1 py-0.5 text-[11px] text-muted-foreground"><T k="contacts_import_modal.003" /></code>{' '}
               column. Optional:{' '}
-              <code className="rounded bg-muted px-1 py-0.5 text-[11px] text-muted-foreground">
-                name
-              </code>
+              <code className="rounded bg-muted px-1 py-0.5 text-[11px] text-muted-foreground"><T k="contacts_import_modal.004" /></code>
               ,{' '}
-              <code className="rounded bg-muted px-1 py-0.5 text-[11px] text-muted-foreground">
-                email
-              </code>
+              <code className="rounded bg-muted px-1 py-0.5 text-[11px] text-muted-foreground"><T k="contacts_import_modal.005" /></code>
               ,{' '}
-              <code className="rounded bg-muted px-1 py-0.5 text-[11px] text-muted-foreground">
-                company
-              </code>
+              <code className="rounded bg-muted px-1 py-0.5 text-[11px] text-muted-foreground"><T k="contacts_import_modal.006" /></code>
               ,{' '}
-              <code className="rounded bg-muted px-1 py-0.5 text-[11px] text-muted-foreground">
-                tags
-              </code>{' '}
+              <code className="rounded bg-muted px-1 py-0.5 text-[11px] text-muted-foreground"><T k="contacts_import_modal.007" /></code>{' '}
               (comma-separated; quote multi-tag cells).
             </DialogDescription>
           </DialogHeader>
@@ -465,12 +455,8 @@ export function ImportModal({
                 <div className="flex size-10 items-center justify-center rounded-lg bg-muted/80 ring-1 ring-border/80 transition-colors group-hover:bg-muted">
                   <Upload className="size-5 text-muted-foreground group-hover:text-foreground" />
                 </div>
-                <p className="text-sm text-muted-foreground">
-                  Click to choose a CSV file
-                </p>
-                <p className="text-[11px] text-muted-foreground">
-                  .csv up to your browser limit
-                </p>
+                <p className="text-sm text-muted-foreground"><T k="contacts_import_modal.008" /></p>
+                <p className="text-[11px] text-muted-foreground"><T k="contacts_import_modal.009" /></p>
               </>
             )}
           </div>
@@ -508,24 +494,14 @@ export function ImportModal({
                   <table className="w-full min-w-[32rem] text-xs">
                     <thead>
                       <tr className="border-b border-border bg-background/60">
-                        <th className="px-3 py-2 text-left font-medium whitespace-nowrap text-muted-foreground">
-                          Phone
-                        </th>
-                        <th className="px-3 py-2 text-left font-medium whitespace-nowrap text-muted-foreground">
-                          Name
-                        </th>
-                        <th className="px-3 py-2 text-left font-medium whitespace-nowrap text-muted-foreground">
-                          Email
-                        </th>
+                        <th className="px-3 py-2 text-left font-medium whitespace-nowrap text-muted-foreground"><T k="dashboard_broadcasts_id_page.004" /></th>
+                        <th className="px-3 py-2 text-left font-medium whitespace-nowrap text-muted-foreground"><T k="dashboard_broadcasts_page.003" /></th>
+                        <th className="px-3 py-2 text-left font-medium whitespace-nowrap text-muted-foreground"><T k="auth_forgot_password_page.005" /></th>
                         {previewHasCompany && (
-                          <th className="px-3 py-2 text-left font-medium whitespace-nowrap text-muted-foreground">
-                            Company
-                          </th>
+                          <th className="px-3 py-2 text-left font-medium whitespace-nowrap text-muted-foreground"><T k="dashboard_contacts_page.002" /></th>
                         )}
                         {previewHasTags && (
-                          <th className="px-3 py-2 text-left font-medium whitespace-nowrap text-muted-foreground">
-                            Tags
-                          </th>
+                          <th className="px-3 py-2 text-left font-medium whitespace-nowrap text-muted-foreground"><T k="dashboard_contacts_page.003" /></th>
                         )}
                       </tr>
                     </thead>
@@ -588,7 +564,7 @@ export function ImportModal({
 
           {result && (
             <div className="rounded-xl border border-border bg-background/50 p-4">
-              <p className="text-sm font-medium text-popover-foreground">Import complete</p>
+              <p className="text-sm font-medium text-popover-foreground"><T k="contacts_import_modal.001" /></p>
               <div className="mt-3 flex flex-wrap gap-3">
                 {result.imported > 0 && (
                   <div className="text-primary flex items-center gap-1.5 text-sm">

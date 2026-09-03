@@ -12,6 +12,7 @@ import {
 } from "@/components/automations/automation-builder"
 import type { AutomationTriggerType } from "@/types"
 
+import { T } from "@/i18n/provider";
 export default function EditAutomationPage({
   params,
 }: {
@@ -55,9 +56,7 @@ export default function EditAutomationPage({
         <button
           onClick={() => router.push("/automations")}
           className="text-sm text-primary hover:text-primary/80"
-        >
-          Back to Automations
-        </button>
+        ><T k="dashboard_automations_id_edit_page.001" /></button>
       </div>
     )
   }

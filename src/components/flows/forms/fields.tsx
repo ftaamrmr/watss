@@ -30,6 +30,7 @@ import {
 import { cn } from "@/lib/utils";
 import { NODE_META, type BuilderNode } from "../shared";
 
+import { T, useT } from "@/i18n/provider";
 export function TextRow({
   label,
   value,
@@ -75,6 +76,7 @@ export function NextNodeRow({
   onChange: (v: string) => void;
   label: string;
 }) {
+  const { t } = useT();
   return (
     <div>
       <label className="mb-1 block text-xs text-muted-foreground">{label}</label>
@@ -83,7 +85,7 @@ export function NextNodeRow({
         nodes={allNodes}
         excludeKey={currentKey}
         onChange={(v) => onChange(v ?? "")}
-        placeholder="Pick a next node…"
+        placeholder={t("flows_forms_fields.002")}
       />
     </div>
   );
@@ -114,7 +116,7 @@ export function NodeKeySelect({
         <SelectValue placeholder={placeholder ?? "—"} />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="__none__">— None —</SelectItem>
+        <SelectItem value="__none__"><T k="flows_forms_fields.001" /></SelectItem>
         {options.map((n) => {
           const Icon = NODE_META[n.node_type].icon;
           return (

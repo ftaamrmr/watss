@@ -29,6 +29,7 @@ import { AiKnowledgeCard } from './ai-knowledge';
 import { AI_PROVIDER_DEFAULT_MODEL } from '@/lib/ai/defaults';
 import type { AiProvider } from '@/lib/ai/types';
 
+import { T, useT } from "@/i18n/provider";
 const MASKED_KEY = '••••••••••••••••';
 
 const PROVIDER_LABEL: Record<AiProvider, string> = {
@@ -42,6 +43,7 @@ const KEY_PLACEHOLDER: Record<AiProvider, string> = {
 };
 
 export function AiConfig() {
+  const { t } = useT();
   const { accountId, accountRole, profileLoading } = useAuth();
   const canEdit = accountRole ? canEditSettings(accountRole) : false;
 
@@ -96,7 +98,7 @@ export function AiConfig() {
         setEmbeddingsKeyEdited(false);
       }
     } catch {
-      toast.error('Failed to load AI configuration');
+      toast.error(t("settings_ai_config.015"));
     } finally {
       setLoading(false);
     }
@@ -149,10 +151,10 @@ export function AiConfig() {
         }),
       });
       const data = await res.json();
-      if (res.ok) toast.success('Key works — the provider responded.');
+      if (res.ok) toast.success(t("settings_ai_config.016"));
       else toast.error(data.error ?? 'The provider rejected the request.');
     } catch {
-      toast.error('Could not reach the provider.');
+      toast.error(t("settings_ai_config.017"));
     } finally {
       setTesting(false);
     }
@@ -160,11 +162,11 @@ export function AiConfig() {
 
   const handleSave = async () => {
     if (!model.trim()) {
-      toast.error('Enter a model name.');
+      toast.error(t("settings_ai_config.018"));
       return;
     }
     if (!configured && !keyEdited) {
-      toast.error('Enter your API key.');
+      toast.error(t("settings_ai_config.019"));
       return;
     }
     setSaving(true);
@@ -176,13 +178,13 @@ export function AiConfig() {
       });
       const data = await res.json();
       if (res.ok) {
-        toast.success('AI assistant saved.');
+        toast.success(t("settings_ai_config.020"));
         await fetchConfig();
       } else {
         toast.error(data.error ?? 'Failed to save.');
       }
     } catch {
-      toast.error('Failed to save.');
+      toast.error(t("settings_ai_config.021"));
     } finally {
       setSaving(false);
     }
@@ -193,7 +195,7 @@ export function AiConfig() {
     try {
       const res = await fetch('/api/ai/config', { method: 'DELETE' });
       if (res.ok) {
-        toast.success('AI configuration removed.');
+        toast.success(t("settings_ai_config.022"));
         setConfigured(false);
         setHasStoredKey(false);
         setApiKey('');
@@ -206,7 +208,7 @@ export function AiConfig() {
         toast.error(data.error ?? 'Failed to remove.');
       }
     } catch {
-      toast.error('Failed to remove.');
+      toast.error(t("settings_ai_config.023"));
     } finally {
       setRemoving(false);
     }
@@ -225,14 +227,12 @@ export function AiConfig() {
   return (
     <div>
       <SettingsPanelHead
-        title="Agent setup"
+        title={t("settings_ai_config.014")}
         description="Bring your own OpenAI or Anthropic key. wacrm calls the provider directly with your key — no per-seat AI fees, and your data stays yours. This powers AI-drafted replies in the inbox, the auto-reply bot, and the Playground."
       />
 
       {!canEdit && (
-        <p className="mb-4 rounded-md border border-border bg-muted/40 px-3 py-2 text-sm text-muted-foreground">
-          Only admins and owners can change the AI configuration.
-        </p>
+        <p className="mb-4 rounded-md border border-border bg-muted/40 px-3 py-2 text-sm text-muted-foreground"><T k="settings_ai_config.007" /></p>
       )}
 
       <div className="space-y-6">
@@ -249,7 +249,7 @@ export function AiConfig() {
           <CardContent className="space-y-4">
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label>Provider</Label>
+                <Label><T k="settings_ai_config.001" /></Label>
                 <Select
                   value={provider}
                   onValueChange={(v) => handleProviderChange(v as AiProvider)}
@@ -268,7 +268,7 @@ export function AiConfig() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="ai-model">Model</Label>
+                <Label htmlFor="ai-model"><T k="settings_ai_config.002" /></Label>
                 <Input
                   id="ai-model"
                   value={model}
@@ -280,7 +280,7 @@ export function AiConfig() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="ai-key">API key</Label>
+              <Label htmlFor="ai-key"><T k="settings_ai_config.003" /></Label>
               <div className="flex gap-2">
                 <div className="relative flex-1">
                   <Input
@@ -332,9 +332,7 @@ export function AiConfig() {
             <div className="space-y-2">
               <Label htmlFor="ai-embeddings-key">
                 Embeddings key{' '}
-                <span className="font-normal text-muted-foreground">
-                  (optional — enables semantic knowledge-base search)
-                </span>
+                <span className="font-normal text-muted-foreground"><T k="settings_ai_config.008" /></span>
               </Label>
               <Input
                 id="ai-embeddings-key"
@@ -350,7 +348,7 @@ export function AiConfig() {
                     setEmbeddingsKeyEdited(true);
                   }
                 }}
-                placeholder="sk-... (OpenAI)"
+                placeholder={t("settings_ai_config.012")}
                 disabled={disabled}
                 autoComplete="off"
               />
@@ -367,7 +365,7 @@ export function AiConfig() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Behaviour</CardTitle>
+            <CardTitle className="text-base"><T k="settings_ai_config.004" /></CardTitle>
             <CardDescription>
               Tell the assistant about your business — products, tone, what it
               may and may not promise. This context feeds both drafts and
@@ -376,12 +374,12 @@ export function AiConfig() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="ai-prompt">Business context & instructions</Label>
+              <Label htmlFor="ai-prompt"><T k="settings_ai_config.005" /></Label>
               <Textarea
                 id="ai-prompt"
                 value={systemPrompt}
                 onChange={(e) => setSystemPrompt(e.target.value)}
-                placeholder="e.g. We are Acme, a coffee-equipment store. Be warm and concise. Never quote prices or delivery dates — hand off to a human for those."
+                placeholder={t("settings_ai_config.013")}
                 rows={5}
                 disabled={disabled}
               />
@@ -389,9 +387,7 @@ export function AiConfig() {
 
             <div className="flex items-center justify-between gap-4 rounded-md border border-border p-3">
               <div>
-                <p className="text-sm font-medium text-foreground">
-                  Enable AI assistant
-                </p>
+                <p className="text-sm font-medium text-foreground"><T k="settings_ai_config.009" /></p>
                 <p className="text-xs text-muted-foreground">
                   Master switch. Turns on the “Draft with AI” button in the
                   inbox.
@@ -406,9 +402,7 @@ export function AiConfig() {
 
             <div className="flex items-center justify-between gap-4 rounded-md border border-border p-3">
               <div>
-                <p className="text-sm font-medium text-foreground">
-                  Auto-reply to inbound messages
-                </p>
+                <p className="text-sm font-medium text-foreground"><T k="settings_ai_config.010" /></p>
                 <p className="text-xs text-muted-foreground">
                   The bot answers new inbound messages automatically (only when
                   no flow handles them and no agent is assigned). Hands off to a
@@ -424,10 +418,8 @@ export function AiConfig() {
 
             <div className="flex items-center justify-between gap-4">
               <div>
-                <Label htmlFor="ai-max">Max auto-replies per conversation</Label>
-                <p className="text-xs text-muted-foreground">
-                  After this many bot replies in one thread, the bot goes quiet.
-                </p>
+                <Label htmlFor="ai-max"><T k="settings_ai_config.006" /></Label>
+                <p className="text-xs text-muted-foreground"><T k="settings_ai_config.011" /></p>
               </div>
               <Input
                 id="ai-max"

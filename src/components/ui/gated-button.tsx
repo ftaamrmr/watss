@@ -5,7 +5,7 @@
 //
 // The wider problem this solves:
 //
-//   A bare `<Button disabled title="Read-only — ...">` doesn't
+//   A bare `<Button disabled title={t("ui_gated_button.001")}>` doesn't
 //   render a tooltip in Safari or older Firefox because those
 //   browsers don't fire mouse events on disabled form controls.
 //   Title attributes only render when the element receives a
@@ -50,6 +50,7 @@ import type { ComponentProps, ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
+import { useT } from "@/i18n/provider";
 interface GatedButtonProps extends Omit<ComponentProps<typeof Button>, "title"> {
   /** False → button is disabled and the wrapper span shows the
    *  "Read-only" tooltip. Defaults to `true` so a `<GatedButton>`
@@ -74,6 +75,7 @@ export function GatedButton({
   children,
   ...rest
 }: GatedButtonProps) {
+  const { t } = useT();
   const effectivelyDisabled = disabled || !canAct;
   const tooltip = !canAct && gateReason
     ? `Read-only — your role can't ${gateReason}`

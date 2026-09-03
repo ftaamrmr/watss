@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Loader2, Plus, Trash2 } from 'lucide-react';
 
+import { T, useT } from "@/i18n/provider";
 interface CustomFieldsManagerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -31,15 +32,14 @@ export function CustomFieldsManager({
   open,
   onOpenChange,
 }: CustomFieldsManagerProps) {
+  const { t } = useT();
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="border-border bg-popover text-popover-foreground sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-popover-foreground">Custom fields</DialogTitle>
+          <DialogTitle className="text-popover-foreground"><T k="dashboard_contacts_page.008" /></DialogTitle>
           <DialogDescription className="text-muted-foreground">
-            Define extra contact fields (e.g. ZIP code, lead source). They
-            appear on every contact and in the “Update Contact Field” automation
-            action.
+            <T k="contacts_custom_fields_manager.010" />
           </DialogDescription>
         </DialogHeader>
         <CustomFieldsPanel />
@@ -55,6 +55,7 @@ export function CustomFieldsManager({
  * `custom_fields` RLS also rejects non-admin writes as defense in depth.
  */
 export function CustomFieldsPanel() {
+  const { t } = useT();
   const supabase = createClient();
   const { user, accountId } = useAuth();
 
@@ -97,7 +98,7 @@ export function CustomFieldsPanel() {
     const name = newName.trim();
     if (!name) return;
     if (!accountId || !user) {
-      toast.error('Your profile is not linked to an account.');
+      toast.error(t("dashboard_broadcasts_new_page.005"));
       return;
     }
     if (isDuplicate(name)) {
@@ -115,7 +116,7 @@ export function CustomFieldsPanel() {
     setCreating(false);
 
     if (error) {
-      toast.error('Could not create field. You may not have permission.');
+      toast.error(t("contacts_custom_fields_manager.007"));
       return;
     }
     toast.success(`Created "${name}".`);
@@ -142,7 +143,7 @@ export function CustomFieldsPanel() {
       .eq('id', field.id);
     setBusyId(null);
     if (error) {
-      toast.error('Could not rename field.');
+      toast.error(t("contacts_custom_fields_manager.008"));
       return false;
     }
     await fetchFields();
@@ -164,7 +165,7 @@ export function CustomFieldsPanel() {
       .eq('id', field.id);
     setBusyId(null);
     if (error) {
-      toast.error('Could not delete field.');
+      toast.error(t("contacts_custom_fields_manager.009"));
       return;
     }
     toast.success(`Deleted "${field.field_name}".`);
@@ -184,7 +185,7 @@ export function CustomFieldsPanel() {
               void handleCreate();
             }
           }}
-          placeholder="New field name…"
+          placeholder={t("contacts_custom_fields_manager.005")}
           className="bg-muted text-foreground"
         />
         <Button
@@ -205,13 +206,7 @@ export function CustomFieldsPanel() {
       <div className="max-h-72 overflow-y-auto rounded-md border border-border">
         {loading ? (
           <div className="flex items-center justify-center gap-2 py-8 text-sm text-muted-foreground">
-            <Loader2 className="size-4 animate-spin" />
-            Loading…
-          </div>
-        ) : fields.length === 0 ? (
-          <p className="py-8 text-center text-sm text-muted-foreground">
-            No custom fields yet.
-          </p>
+            <Loader2 className="size-4 animate-spin" /><T k="contacts_custom_fields_manager.002" /></div>) : fields.length === 0 ? (<p className="py-8 text-center text-sm text-muted-foreground"><T k="contacts_custom_fields_manager.004" /></p>
         ) : (
           <ul className="divide-y divide-border">
             {fields.map((field) => (
@@ -243,6 +238,7 @@ function FieldRow({
   onRename: (field: CustomField, name: string) => Promise<boolean>;
   onDelete: (field: CustomField) => void;
 }) {
+  const { t } = useT();
   const [name, setName] = useState(field.field_name);
 
   async function commit() {
@@ -272,7 +268,7 @@ function FieldRow({
         size="icon-sm"
         disabled={busy}
         onClick={() => onDelete(field)}
-        title="Delete field"
+        title={t("contacts_custom_fields_manager.006")}
         className="shrink-0 text-muted-foreground hover:text-red-400"
       >
         {busy ? (

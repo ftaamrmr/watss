@@ -7,12 +7,14 @@ import { BarChart } from '@/components/tremor/bar-chart'
 import { EmptyState } from './empty-state'
 import { Skeleton } from './skeleton'
 
+import { T, useT } from "@/i18n/provider";
 interface ResponseTimeChartProps {
   data: ResponseTimeSummary | null
   loading: boolean
   /** Minutes. Surfaced as a "target" pill in the header. The
    *  hand-rolled SVG version drew this as a horizontal dashed
-   *  line on the chart; Tremor BarChart doesn't expose Recharts
+   *  line on the chart;
+ Tremor BarChart doesn't expose Recharts
    *  primitives, so we promote it to the header for now. A
    *  follow-up can introduce an overlay or extend the vendored
    *  BarChart with a `referenceLines` prop. */
@@ -30,6 +32,7 @@ export function ResponseTimeChart({
   loading,
   thresholdMinutes = 5,
 }: ResponseTimeChartProps) {
+  const { t } = useT();
   const hasData = data?.buckets.some((b) => b.avgMinutes != null) ?? false
 
   // Map buckets → Tremor rows. Null `avgMinutes` (no samples)
@@ -47,9 +50,7 @@ export function ResponseTimeChart({
     <section className="rounded-xl border border-border bg-card">
       <header className="flex items-center justify-between gap-3 border-b border-border px-5 py-4">
         <div>
-          <h2 className="text-sm font-semibold text-foreground">
-            Average First Response Time
-          </h2>
+          <h2 className="text-sm font-semibold text-foreground"><T k="dashboard_response_time_chart.001" /></h2>
           <p className="mt-0.5 text-xs text-muted-foreground">
             Minutes to reply to a customer&apos;s first unreplied message, by
             weekday
@@ -80,12 +81,10 @@ export function ResponseTimeChart({
 
       <div className="p-5">
         {loading || !data ? (
-          <Skeleton className="h-[260px] w-full" />
-        ) : !hasData ? (
-          <EmptyState
+          <Skeleton className="h-[260px] w-full" />) : !hasData ? (<EmptyState
             icon={Clock}
-            title="No replies recorded yet"
-            hint="This chart fills in as you reply to customer messages."
+            title={t("dashboard_response_time_chart.003")}
+            hint={t("dashboard_response_time_chart.004")}
           />
         ) : (
           <BarChart

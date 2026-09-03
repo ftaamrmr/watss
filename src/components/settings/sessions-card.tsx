@@ -22,7 +22,9 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 
+import { T, useT } from "@/i18n/provider";
 export function SessionsCard() {
+  const { t } = useT();
   const supabase = createClient();
   const [open, setOpen] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
@@ -35,7 +37,7 @@ export function SessionsCard() {
       // triggers the usual redirect.
       const { error } = await supabase.auth.signOut({ scope: 'global' });
       if (error) {
-        toast.error(`Sign-out failed: ${error.message}`);
+        toast.error(t("settings_sessions_card.004", { message: error.message }));
         return;
       }
       window.location.href = '/login';
@@ -52,9 +54,7 @@ export function SessionsCard() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-foreground">
-            <LogOut className="size-4 text-primary" />
-            Active sessions
-          </CardTitle>
+            <LogOut className="size-4 text-primary" /><T k="settings_sessions_card.002" /></CardTitle>
           <CardDescription className="text-muted-foreground">
             Sign out of every device where you&apos;re logged in — including
             this one. Useful if you lost a laptop or shared your password.
@@ -66,16 +66,14 @@ export function SessionsCard() {
             variant="outline"
             onClick={() => setOpen(true)}
           >
-            <LogOut className="size-4" />
-            Sign out of all devices
-          </Button>
+            <LogOut className="size-4" /><T k="settings_sessions_card.003" /></Button>
         </CardContent>
       </Card>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Sign out everywhere?</DialogTitle>
+            <DialogTitle><T k="settings_sessions_card.001" /></DialogTitle>
             <DialogDescription>
               Every device logged into this account will be signed out and
               will need to log in again. You will be redirected to the login
@@ -88,15 +86,11 @@ export function SessionsCard() {
               variant="ghost"
               onClick={() => setOpen(false)}
               disabled={signingOut}
-            >
-              Cancel
-            </Button>
+            ><T k="dashboard_automations_page.009" /></Button>
             <Button type="button" onClick={onConfirm} disabled={signingOut}>
               {signingOut ? (
                 <>
-                  <Loader2 className="size-4 animate-spin" />
-                  Signing out…
-                </>
+                  <Loader2 className="size-4 animate-spin" /><T k="join_token_page.007" /></>
               ) : (
                 'Sign out everywhere'
               )}

@@ -25,6 +25,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, AlertTriangle } from 'lucide-react';
 
+import { T, useT } from "@/i18n/provider";
 interface ContactFormProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -44,6 +45,7 @@ export function ContactForm({
   onSaved,
   onViewExisting,
 }: ContactFormProps) {
+  const { t } = useT();
   const supabase = createClient();
   const { accountId } = useAuth();
   const isEdit = !!contact;
@@ -123,14 +125,14 @@ export function ContactForm({
     e.preventDefault();
 
     if (!phone.trim()) {
-      toast.error('Phone number is required');
+      toast.error(t("contacts_contact_detail_view.014"));
       return;
     }
 
     // Hard-block an exact duplicate on create (the DB unique index is
     // the real backstop; this avoids a round-trip + a raw error toast).
     if (!isEdit && dupMatch?.exact) {
-      toast.error('A contact with this phone number already exists');
+      toast.error(t("contacts_contact_form.005"));
       return;
     }
 
@@ -203,7 +205,7 @@ export function ContactForm({
       // normalizes equal). Surface it as the friendly duplicate notice
       // and, for new contacts, point the user at the existing record.
       if (isUniqueViolation(err)) {
-        toast.error('A contact with this phone number already exists');
+        toast.error(t("contacts_contact_form.005"));
         if (!isEdit && accountId) {
           const existing = await findExistingContact(
             supabase,
@@ -237,14 +239,12 @@ export function ContactForm({
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="cf-name" className="text-muted-foreground">
-              Name
-            </Label>
+            <Label htmlFor="cf-name" className="text-muted-foreground"><T k="dashboard_broadcasts_page.003" /></Label>
             <Input
               id="cf-name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="John Doe"
+              placeholder={t("auth_signup_page.004")}
               className="bg-muted border-border text-foreground placeholder:text-muted-foreground"
             />
           </div>
@@ -291,50 +291,38 @@ export function ContactForm({
                 </div>
               </div>
             ) : (
-              <p className="text-xs text-muted-foreground">
-                Include country code, e.g. +1 for US
-              </p>
+              <p className="text-xs text-muted-foreground"><T k="contacts_contact_form.001" /></p>
             )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="cf-email" className="text-muted-foreground">
-              Email
-            </Label>
+            <Label htmlFor="cf-email" className="text-muted-foreground"><T k="auth_forgot_password_page.005" /></Label>
             <Input
               id="cf-email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="john@example.com"
+              placeholder={t("contacts_contact_form.003")}
               className="bg-muted border-border text-foreground placeholder:text-muted-foreground"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="cf-company" className="text-muted-foreground">
-              Company
-            </Label>
+            <Label htmlFor="cf-company" className="text-muted-foreground"><T k="dashboard_contacts_page.002" /></Label>
             <Input
               id="cf-company"
               value={company}
               onChange={(e) => setCompany(e.target.value)}
-              placeholder="Acme Inc."
+              placeholder={t("contacts_contact_form.004")}
               className="bg-muted border-border text-foreground placeholder:text-muted-foreground"
             />
           </div>
 
           <div className="space-y-2">
-            <Label className="text-muted-foreground">Tags</Label>
+            <Label className="text-muted-foreground"><T k="dashboard_contacts_page.003" /></Label>
             {loadingTags ? (
               <div className="flex items-center gap-2 text-muted-foreground text-sm">
-                <Loader2 className="size-3 animate-spin" />
-                Loading tags...
-              </div>
-            ) : tags.length === 0 ? (
-              <p className="text-xs text-muted-foreground">
-                No tags available. Create tags in Settings.
-              </p>
+                <Loader2 className="size-3 animate-spin" /><T k="contacts_contact_form.002" /></div>) : tags.length === 0 ? (<p className="text-xs text-muted-foreground"><T k="contacts_contact_detail_view.008" /></p>
             ) : (
               <div className="flex flex-wrap gap-1.5">
                 {tags.map((tag) => {
@@ -369,9 +357,7 @@ export function ContactForm({
               variant="outline"
               onClick={() => onOpenChange(false)}
               className="border-border text-muted-foreground hover:bg-muted"
-            >
-              Cancel
-            </Button>
+            ><T k="dashboard_automations_page.009" /></Button>
             <Button
               type="submit"
               disabled={saving || checkingDup || (!isEdit && !!dupMatch?.exact)}

@@ -13,6 +13,7 @@ import { Step4ScheduleSend } from '@/components/broadcasts/step4-schedule-send';
 import { useBroadcastSending } from '@/hooks/use-broadcast-sending';
 import { Check } from 'lucide-react';
 
+import { T, useT } from "@/i18n/provider";
 const steps = [
   { label: 'Template', key: 'template' },
   { label: 'Audience', key: 'audience' },
@@ -21,6 +22,7 @@ const steps = [
 ] as const;
 
 export default function NewBroadcastPage() {
+  const { t } = useT();
   const router = useRouter();
   const { accountId } = useAuth();
   const { createAndSendBroadcast, isProcessing, progress } = useBroadcastSending();
@@ -82,7 +84,7 @@ export default function NewBroadcastPage() {
    */
   async function handleSaveDraft() {
     if (!template || !name.trim()) {
-      toast.error('Give the broadcast a name before saving a draft.');
+      toast.error(t("dashboard_broadcasts_new_page.003"));
       return;
     }
     const supabase = createClient();
@@ -91,11 +93,11 @@ export default function NewBroadcastPage() {
     } = await supabase.auth.getSession();
     const user = session?.user;
     if (!user) {
-      toast.error('Not signed in.');
+      toast.error(t("dashboard_broadcasts_new_page.004"));
       return;
     }
     if (!accountId) {
-      toast.error('Your profile is not linked to an account.');
+      toast.error(t("dashboard_broadcasts_new_page.005"));
       return;
     }
 
@@ -120,10 +122,10 @@ export default function NewBroadcastPage() {
     });
 
     if (error) {
-      toast.error(`Failed to save draft: ${error.message}`);
+      toast.error(t("dashboard_broadcasts_new_page.006", { message: error.message }));
       return;
     }
-    toast.success('Draft saved');
+    toast.success(t("dashboard_broadcasts_new_page.007"));
     router.push('/broadcasts');
   }
 
@@ -131,10 +133,8 @@ export default function NewBroadcastPage() {
     <div className="mx-auto max-w-3xl space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-foreground">New Broadcast</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Create and send a broadcast message to your contacts.
-        </p>
+        <h1 className="text-2xl font-bold text-foreground"><T k="dashboard_broadcasts_new_page.001" /></h1>
+        <p className="mt-1 text-sm text-muted-foreground"><T k="dashboard_broadcasts_new_page.002" /></p>
       </div>
 
       {/* Step Indicator */}

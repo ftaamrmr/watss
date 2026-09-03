@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { FlowEditorShell } from "@/components/flows/flow-editor-shell";
 import type { FlowRow, FlowNodeRow } from "@/lib/flows/types";
 
+import { T, useT } from "@/i18n/provider";
 /**
  * Flow editor shell.
  *
@@ -21,6 +22,7 @@ import type { FlowRow, FlowNodeRow } from "@/lib/flows/types";
  * "Flow not found" state below.
  */
 export default function FlowEditorPage() {
+  const { t } = useT();
   const router = useRouter();
   const params = useParams<{ id: string }>();
 
@@ -51,7 +53,7 @@ export default function FlowEditorPage() {
       } catch (err) {
         if (!cancelled) {
           console.error(err);
-          toast.error("Couldn't load flow.");
+          toast.error(t("dashboard_flows_id_page.003"));
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -60,7 +62,7 @@ export default function FlowEditorPage() {
     return () => {
       cancelled = true;
     };
-  }, [params.id]);
+  }, [params.id, t]);
 
   if (loading) {
     return (
@@ -72,14 +74,12 @@ export default function FlowEditorPage() {
   if (notFound || !flow) {
     return (
       <div className="flex h-full flex-col items-center justify-center gap-3">
-        <p className="text-sm text-muted-foreground">Flow not found.</p>
+        <p className="text-sm text-muted-foreground"><T k="dashboard_flows_id_page.001" /></p>
         <button
           type="button"
           onClick={() => router.push("/flows")}
           className="text-sm text-primary hover:opacity-80"
-        >
-          ← Back to flows
-        </button>
+        ><T k="dashboard_flows_id_page.002" /></button>
       </div>
     );
   }

@@ -7,6 +7,7 @@ import { MODES, THEMES, type Mode, type ThemeId } from "@/lib/themes";
 import { cn } from "@/lib/utils";
 import { SettingsPanelHead } from "./settings-panel-head";
 
+import { T, useT } from "@/i18n/provider";
 /**
  * Appearance panel — light/dark mode + accent-color picker.
  *
@@ -20,23 +21,22 @@ import { SettingsPanelHead } from "./settings-panel-head";
  * loads.
  */
 export function AppearancePanel() {
+  const { t } = useT();
   const { theme, setTheme, mode, setMode } = useTheme();
   return (
     <section className="max-w-3xl animate-in fade-in-50 duration-200">
       <SettingsPanelHead
-        title="Appearance"
+        title={t("settings_appearance_panel.002")}
         description="Set the mode and accent colour used across the app. Saved to this device — try it, it changes live."
       />
 
       <div className="space-y-4">
         <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
-          <SunMoon className="size-4 text-muted-foreground" />
-          Mode
-        </h3>
+          <SunMoon className="size-4 text-muted-foreground" /><T k="automations_automation_builder.041" /></h3>
 
         <div
           role="radiogroup"
-          aria-label="Color mode"
+          aria-label={t("settings_appearance_panel.003")}
           className="grid max-w-md grid-cols-2 gap-3"
         >
           {MODES.map((m) => (
@@ -52,9 +52,7 @@ export function AppearancePanel() {
 
       <div className="mt-8 space-y-4">
         <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
-          <Palette className="size-4 text-muted-foreground" />
-          Accent color
-        </h3>
+          <Palette className="size-4 text-muted-foreground" /><T k="settings_appearance_panel.001" /></h3>
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {THEMES.map((t) => (
@@ -110,9 +108,7 @@ function ModeCard({
       </span>
       {isActive && (
         <span className="inline-flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-[11px] font-medium text-primary">
-          <Check className="h-3 w-3" />
-          Active
-        </span>
+          <Check className="h-3 w-3" /><T k="dashboard_flows_id_runs_page.003" /></span>
       )}
     </button>
   );
@@ -157,9 +153,7 @@ function ThemeCard({
         />
         {isActive && (
           <span className="inline-flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-[11px] font-medium text-primary">
-            <Check className="h-3 w-3" />
-            Active
-          </span>
+            <Check className="h-3 w-3" /><T k="dashboard_flows_id_runs_page.003" /></span>
         )}
       </div>
       <div>

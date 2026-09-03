@@ -17,6 +17,7 @@ import {
 import { Card, CardContent } from '@/components/ui/card';
 import { SettingsPanelHead } from './settings-panel-head';
 
+import { T, useT } from "@/i18n/provider";
 const MAX_AVATAR_BYTES = 2 * 1024 * 1024;
 const ALLOWED_MIME = new Set([
   'image/png',
@@ -31,6 +32,7 @@ const ALLOWED_MIME = new Set([
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function ProfileForm() {
+  const { t } = useT();
   const { user, profile, refreshProfile } = useAuth();
   const supabase = createClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -70,14 +72,14 @@ export function ProfileForm() {
     if (!file) return;
 
     if (!ALLOWED_MIME.has(file.type)) {
-      toast.error('Unsupported image type', {
-        description: 'Use PNG, JPG, WebP, or GIF.',
+      toast.error(t("settings_profile_form.011"), {
+        description: t("settings_profile_form.004"),
       });
       return;
     }
     if (file.size > MAX_AVATAR_BYTES) {
-      toast.error('Image is too large', {
-        description: 'Maximum 2 MB.',
+      toast.error(t("settings_profile_form.012"), {
+        description: t("settings_profile_form.004"),
       });
       return;
     }
@@ -101,12 +103,12 @@ export function ProfileForm() {
 
     const trimmedName = fullName.trim();
     if (!trimmedName) {
-      toast.error('Display name is required');
+      toast.error(t("settings_profile_form.013"));
       return;
     }
     const trimmedEmail = email.trim();
     if (!EMAIL_RE.test(trimmedEmail)) {
-      toast.error('Enter a valid email address');
+      toast.error(t("settings_profile_form.014"));
       return;
     }
 
@@ -161,8 +163,8 @@ export function ProfileForm() {
         });
         if (emailError) {
           // Partial success: name/avatar saved but email didn't.
-          toast.success('Profile saved');
-          toast.error(`Email change failed: ${emailError.message}`);
+          toast.success(t("settings_profile_form.015"));
+          toast.error(t("settings_profile_form.016", { message: emailError.message }));
           setSaving(false);
           await refreshProfile();
           return;
@@ -207,7 +209,7 @@ export function ProfileForm() {
   return (
     <section className="max-w-2xl animate-in fade-in-50 duration-200">
       <SettingsPanelHead
-        title="Your profile"
+        title={t("settings_profile_form.010")}
         description="How you show up across the app. Your avatar and name appear in the header, sidebar, and anywhere your teammates see you."
       />
       <form onSubmit={onSubmit} className="space-y-4">
@@ -249,26 +251,20 @@ export function ProfileForm() {
                   disabled={saving}
                   className="text-muted-foreground hover:text-foreground"
                 >
-                  <Trash2 className="size-4" />
-                  Remove
-                </Button>
+                  <Trash2 className="size-4" /><T k="settings_profile_form.003" /></Button>
               )}
-              <p className="w-full text-xs text-muted-foreground">
-                PNG, JPG, WebP, or GIF. Up to 2 MB.
-              </p>
+              <p className="w-full text-xs text-muted-foreground"><T k="settings_profile_form.004" /></p>
             </div>
           </div>
 
           {/* Name */}
           <div className="space-y-2">
-            <Label htmlFor="profile-full-name" className="text-foreground">
-              Display name
-            </Label>
+            <Label htmlFor="profile-full-name" className="text-foreground"><T k="settings_profile_form.005" /></Label>
             <Input
               id="profile-full-name"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              placeholder="Ada Lovelace"
+              placeholder={t("settings_profile_form.009")}
               maxLength={120}
               disabled={saving}
               required
@@ -277,9 +273,7 @@ export function ProfileForm() {
 
           {/* Email */}
           <div className="space-y-2">
-            <Label htmlFor="profile-email" className="text-foreground">
-              Email
-            </Label>
+            <Label htmlFor="profile-email" className="text-foreground"><T k="auth_forgot_password_page.005" /></Label>
             <Input
               id="profile-email"
               type="email"
@@ -302,22 +296,20 @@ export function ProfileForm() {
 
           {/* Read-only block */}
           <div className="rounded-lg border border-border bg-muted p-4">
-            <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Account details
-            </p>
+            <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground"><T k="settings_profile_form.006" /></p>
             <dl className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
               <div>
-                <dt className="text-muted-foreground">Role</dt>
+                <dt className="text-muted-foreground"><T k="settings_invite_member_dialog.003" /></dt>
                 <dd className="mt-0.5 font-mono text-foreground">
                   {profile?.role ?? 'user'}
                 </dd>
               </div>
               <div>
-                <dt className="text-muted-foreground">Joined</dt>
+                <dt className="text-muted-foreground"><T k="settings_profile_form.001" /></dt>
                 <dd className="mt-0.5 text-foreground">{joined}</dd>
               </div>
               <div className="sm:col-span-2">
-                <dt className="text-muted-foreground">User ID</dt>
+                <dt className="text-muted-foreground"><T k="settings_profile_form.002" /></dt>
                 <dd className="mt-0.5 break-all font-mono text-xs text-muted-foreground">
                   {user?.id ?? '—'}
                 </dd>
@@ -327,9 +319,7 @@ export function ProfileForm() {
 
           {!profile && (
             <p className="flex items-center gap-2 text-sm text-muted-foreground">
-              <CircleAlert className="size-4" />
-              Loading your profile…
-            </p>
+              <CircleAlert className="size-4" /><T k="settings_profile_form.007" /></p>
           )}
 
         </CardContent>
@@ -339,9 +329,7 @@ export function ProfileForm() {
           <Button type="submit" disabled={saving || !dirty || !profile}>
             {saving ? (
               <>
-                <Loader2 className="size-4 animate-spin" />
-                Saving…
-              </>
+                <Loader2 className="size-4 animate-spin" /><T k="settings_profile_form.008" /></>
             ) : (
               'Save changes'
             )}

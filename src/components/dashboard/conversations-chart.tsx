@@ -7,6 +7,7 @@ import { EmptyState } from './empty-state'
 import { Skeleton } from './skeleton'
 import { cn } from '@/lib/utils'
 
+import { T, useT } from "@/i18n/provider";
 type RangeDays = 7 | 30 | 90
 
 interface ConversationsChartProps {
@@ -28,6 +29,7 @@ const VB_H = 240
 const PADDING = { top: 16, right: 16, bottom: 28, left: 40 }
 
 export function ConversationsChart({ series, loading, range, onRangeChange }: ConversationsChartProps) {
+  const { t } = useT();
   const data = series[range]
 
   // Memoise the max so per-day hover math doesn't recompute it.
@@ -49,8 +51,8 @@ export function ConversationsChart({ series, loading, range, onRangeChange }: Co
     <section className="flex h-full flex-col rounded-xl border border-border bg-card">
       <header className="flex items-center justify-between border-b border-border px-5 py-4">
         <div>
-          <h2 className="text-sm font-semibold text-foreground">Conversations Over Time</h2>
-          <p className="mt-0.5 text-xs text-muted-foreground">Daily message volume by direction</p>
+          <h2 className="text-sm font-semibold text-foreground"><T k="dashboard_conversations_chart.001" /></h2>
+          <p className="mt-0.5 text-xs text-muted-foreground"><T k="dashboard_conversations_chart.002" /></p>
         </div>
         <div className="flex items-center gap-1 rounded-lg bg-muted/60 p-1">
           {[7, 30, 90].map((r) => (
@@ -77,8 +79,8 @@ export function ConversationsChart({ series, loading, range, onRangeChange }: Co
         ) : data.every((p) => p.incoming === 0 && p.outgoing === 0) ? (
           <EmptyState
             icon={MessageSquare}
-            title="No message activity in this range"
-            hint="Send or receive messages to start populating this chart."
+            title={t("dashboard_conversations_chart.004")}
+            hint={t("dashboard_conversations_chart.008")}
           />
         ) : (
           <LineSvg data={data} maxY={maxY} ticks={niceTicks} />
@@ -86,8 +88,8 @@ export function ConversationsChart({ series, loading, range, onRangeChange }: Co
       </div>
 
       <footer className="flex items-center gap-4 border-t border-border px-5 py-3 text-xs text-muted-foreground">
-        <LegendDot color="#3b82f6" label="Incoming" />
-        <LegendDot color="#7c3aed" label="Outgoing" />
+        <LegendDot color="#3b82f6" label={t("dashboard_conversations_chart.006")} />
+        <LegendDot color="#7c3aed" label={t("dashboard_conversations_chart.007")} />
       </footer>
     </section>
   )
@@ -106,12 +108,14 @@ function LineSvg({
   maxY: number
   ticks: number[]
 }) {
+  const { t } = useT();
   // Hover state: both the snapped index AND the tooltip's pixel
   // offset inside the wrapper div. They're stored together so the
   // tooltip positions against the chart's actual rendered pixels,
   // not against a raw viewBox percentage. See the precision note on
   // the onMove handler below.
-  const [hover, setHover] = useState<{ idx: number; tooltipLeftPx: number } | null>(null)
+  const [hover, setHover] = useState<{ idx: number;
+ tooltipLeftPx: number } | null>(null)
   const svgRef = useRef<SVGSVGElement>(null)
   const wrapRef = useRef<HTMLDivElement>(null)
 
@@ -195,7 +199,7 @@ function LineSvg({
         viewBox={`0 0 ${VB_W} ${VB_H}`}
         className="h-[240px] w-full"
         role="img"
-        aria-label="Conversations per day"
+        aria-label={t("dashboard_conversations_chart.005")}
       >
         {/* Y-axis gridlines + labels */}
         {ticks.map((t) => {
@@ -224,9 +228,7 @@ function LineSvg({
         })}
 
         {/* X-axis labels */}
-        {data.map((p, i) =>
-          i % labelStride === 0 ? (
-            <text
+        {data.map((p, i) => i % labelStride === 0 ? (<text
               key={p.day}
               x={xFor(i)}
               y={VB_H - 8}
@@ -301,6 +303,7 @@ function LineSvg({
 }
 
 function LegendDot({ color, label }: { color: string; label: string }) {
+  const { t } = useT();
   return (
     <span className="flex items-center gap-1.5">
       <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ background: color }} />
