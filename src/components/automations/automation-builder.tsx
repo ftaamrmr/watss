@@ -118,17 +118,17 @@ const ADDABLE_STEPS: AutomationStepType[] = [
 ]
 
 const TRIGGER_OPTIONS: { value: AutomationTriggerType; label: string; hint: string }[] = [
-  { value: "new_message_received", label: "automations_automation_builder.063", hint: "Any incoming message" },
+  { value: "new_message_received", label: "automations_automation_builder.063", hint: "automations_automation_builder.072" },
   {
     value: "first_inbound_message",
     label: "automations_automation_builder.064",
-    hint: "First time this contact ever messages you (works for manually-added contacts too)",
+    hint: "automations_automation_builder.073",
   },
-  { value: "keyword_match", label: "automations_automation_builder.065", hint: "Message contains specific keyword(s)" },
-  { value: "new_contact_created", label: "automations_automation_builder.066", hint: "When a contact is auto-created from an incoming message" },
-  { value: "conversation_assigned", label: "automations_automation_builder.067", hint: "When assigned to an agent" },
-  { value: "tag_added", label: "automations_automation_builder.068", hint: "When a tag is added to a contact" },
-  { value: "time_based", label: "automations_automation_builder.069", hint: "On a recurring schedule" },
+  { value: "keyword_match", label: "automations_automation_builder.065", hint: "automations_automation_builder.074" },
+  { value: "new_contact_created", label: "automations_automation_builder.066", hint: "automations_automation_builder.075" },
+  { value: "conversation_assigned", label: "automations_automation_builder.067", hint: "automations_automation_builder.076" },
+  { value: "tag_added", label: "automations_automation_builder.068", hint: "automations_automation_builder.077" },
+  { value: "time_based", label: "automations_automation_builder.069", hint: "automations_automation_builder.078" },
 ]
 
 function cid(): string {
@@ -635,7 +635,7 @@ export function AutomationBuilder({ initial }: { initial: BuilderInitial }) {
     setSaving(true)
     try {
       const payload = {
-        name: state.name || "Untitled automation",
+        name: state.name || t("automations_automation_builder.079"),
         description: state.description || null,
         trigger_type: state.trigger_type,
         trigger_config: state.trigger_config,
@@ -671,7 +671,7 @@ export function AutomationBuilder({ initial }: { initial: BuilderInitial }) {
         }
         return
       }
-      toast.success(isEditing ? "Automation saved" : "Automation created")
+      toast.success(isEditing ? t("automations_automation_builder.080") : t("automations_automation_builder.081"))
       if (!isEditing && body?.automation?.id) {
         router.replace(`/automations/${body.automation.id}/edit`)
       }
@@ -714,7 +714,7 @@ export function AutomationBuilder({ initial }: { initial: BuilderInitial }) {
           className="bg-primary text-primary-foreground hover:bg-primary/90"
         >
           {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-          {isEditing ? "Save" : "Save Draft"}
+          {isEditing ? t("automations_automation_builder.082") : t("automations_automation_builder.083")}
         </Button>
       </header>
 
@@ -802,7 +802,7 @@ function TriggerCard({
                 ))}
               </select>
               <p className="mt-1 text-[11px] text-muted-foreground">
-                {(() => { const o = TRIGGER_OPTIONS.find((o) => o.value === type); return o ? o.hint : "" })()}
+                {(() => { const o = TRIGGER_OPTIONS.find((o) => o.value === type); return o ? t(o.hint) : "" })()}
               </p>
             </div>
             {type === "keyword_match" && (

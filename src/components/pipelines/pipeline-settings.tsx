@@ -213,8 +213,7 @@ export function PipelineSettings({
               <div>
                 <p className="text-sm font-medium text-red-400"><T k="pipelines_pipeline_settings.003" /></p>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  This will archive all deals in this pipeline. This cannot be
-                  undone.
+                  <T k="pipelines_pipeline_settings.019" />
                 </p>
               </div>
             </div>
@@ -229,7 +228,7 @@ export function PipelineSettings({
                 disabled={deleting}
                 className="bg-red-600 text-white hover:bg-red-700"
               >
-                {deleting ? "Deleting..." : "Delete Pipeline"}
+                {deleting ? t("pipelines_pipeline_settings.016") : t("pipelines_pipeline_settings.003")}
               </Button>
             </div>
           </div>
@@ -343,7 +342,7 @@ export function PipelineSettings({
                 disabled={saving || !name.trim()}
                 className="bg-primary text-primary-foreground hover:bg-primary/90"
               >
-                {saving ? "Saving..." : "Save Changes"}
+                {saving ? t("pipelines_pipeline_settings.017") : t("pipelines_pipeline_settings.018")}
               </Button>
             </DialogFooter>
           </>

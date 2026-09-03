@@ -80,7 +80,7 @@ export function ConversationsChart({ series, loading, range, onRangeChange }: Co
           <EmptyState
             icon={MessageSquare}
             title={t("dashboard_conversations_chart.004")}
-            hint="Send or receive messages to start populating this chart."
+            hint={t("dashboard_conversations_chart.008")}
           />
         ) : (
           <LineSvg data={data} maxY={maxY} ticks={niceTicks} />

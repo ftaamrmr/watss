@@ -239,8 +239,7 @@ export function Step3Personalize({
       <div>
         <h2 className="text-lg font-semibold text-foreground"><T k="broadcasts_step3_personalize.001" /></h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Map template variables to contact fields, custom fields, or static
-          values.
+          <T k="broadcasts_step3_personalize.016" />
         </p>
       </div>
 
@@ -268,8 +267,7 @@ export function Step3Personalize({
             className="border-border bg-muted text-foreground placeholder:text-muted-foreground"
           />
           <p className="mt-1.5 text-xs text-muted-foreground">
-            Public URL of the {mediaHeaderType} sent as the message header.
-            Used for every recipient in this broadcast.
+            {t("broadcasts_step3_personalize.017", { type: mediaHeaderType })}
           </p>
           {mediaHeaderType === 'image' &&
             headerMediaError === null &&

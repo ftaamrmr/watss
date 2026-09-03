@@ -212,7 +212,7 @@ function MessageContent({ message }: { message: Message }) {
       return (
         <div className="flex items-center gap-2 text-sm">
           <MapPin className="h-4 w-4 shrink-0 text-muted-foreground" />
-          <span>{message.content_text || "Location shared"}</span>
+          <span>{message.content_text || t("inbox_message_bubble.006")}</span>
         </div>
       );
 

@@ -182,14 +182,12 @@ export default function FlowRunsPage() {
       </button>
       <h1 className="text-xl font-semibold text-foreground"><T k="dashboard_flows_id_runs_page.001" /></h1>
       <p className="mt-1 text-sm text-muted-foreground">
-        The 50 most recent times this flow ran. Expand a row to see the engine&apos;s
-        per-step log.
+        <T k="dashboard_flows_id_runs_page.009" />
       </p>
 
       {runs.length === 0 ? (
         <div className="mt-6 rounded-lg border border-dashed border-border bg-card/50 px-6 py-12 text-center text-sm text-muted-foreground">
-          No runs yet. Trigger the flow from a personal WhatsApp number to see
-          it appear here.
+          <T k="dashboard_flows_id_runs_page.010" />
         </div>
       ) : (
         <div className="mt-6 flex flex-col gap-2">

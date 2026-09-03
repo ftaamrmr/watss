@@ -179,7 +179,7 @@ export default function NotificationsPage() {
           ) : (
             <CheckCheck className="h-4 w-4" />
           )}
-          Mark all as read
+          {t("dashboard_notifications_page.007")}
         </Button>
       </div>
 

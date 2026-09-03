@@ -485,7 +485,7 @@ export function TemplateManager() {
       <SettingsPanelHead
         title={t("settings_template_manager.025")}
         description={
-          'Create templates and submit them to Meta for approval. Use "Sync from Meta" to pull templates approved elsewhere.'
+          t("settings_template_manager.045")
         }
         action={
           <div className="flex items-center gap-2">

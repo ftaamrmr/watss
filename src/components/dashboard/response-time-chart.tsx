@@ -84,7 +84,7 @@ export function ResponseTimeChart({
           <Skeleton className="h-[260px] w-full" />) : !hasData ? (<EmptyState
             icon={Clock}
             title={t("dashboard_response_time_chart.003")}
-            hint="This chart fills in as you reply to customer messages."
+            hint={t("dashboard_response_time_chart.004")}
           />
         ) : (
           <BarChart

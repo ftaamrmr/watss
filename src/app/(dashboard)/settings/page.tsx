@@ -69,8 +69,7 @@ export default function SettingsPage() {
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-foreground"><T k="dashboard_settings_page.001" /></h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Everything in one place — your account and your workspace. Pick a
-          section to manage it.
+          <T k="dashboard_settings_page.002" />
         </p>
       </div>
 

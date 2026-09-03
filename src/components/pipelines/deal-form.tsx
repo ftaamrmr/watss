@@ -206,7 +206,7 @@ export function DealForm({
     }
 
     setSaving(false);
-    toast.success(deal ? "Deal updated" : "Deal created");
+    toast.success(deal ? t("pipelines_deal_form.021") : t("pipelines_deal_form.022"));
     onOpenChange(false);
     onSaved();
   }
@@ -224,7 +224,7 @@ export function DealForm({
       return;
     }
     toast.success(
-      status === "won" ? "Marked as won" : status === "lost" ? "Marked as lost" : "Deal reopened",
+      status === "won" ? t("pipelines_deal_form.023") : status === "lost" ? t("pipelines_deal_form.024") : t("pipelines_deal_form.025"),
     );
     onOpenChange(false);
     onSaved();
@@ -254,7 +254,7 @@ export function DealForm({
         <div className="flex h-full flex-col">
           <SheetHeader className="border-b border-border/50 p-4">
             <SheetTitle className="text-popover-foreground">
-              {deal ? "Edit Deal" : "New Deal"}
+              {deal ? t("pipelines_deal_form.026") : t("pipelines_deal_form.027")}
             </SheetTitle>
           </SheetHeader>
 
@@ -430,7 +430,7 @@ export function DealForm({
                 disabled={saving || !title.trim() || !contactId || !stageId}
                 className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
               >
-                {saving ? "Saving..." : deal ? "Save Changes" : "Create Deal"}
+                {saving ? t("pipelines_deal_form.028") : deal ? t("pipelines_deal_form.029") : t("pipelines_deal_form.030")}
               </Button>
             </div>
 

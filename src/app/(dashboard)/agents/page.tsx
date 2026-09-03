@@ -39,8 +39,7 @@ export default function AgentsPage() {
         <h1 className="text-2xl font-bold tracking-tight text-foreground"><T k="dashboard_agents_page.001" /></h1>
       </div>
       <p className="mt-1 text-sm text-muted-foreground">
-        Your bring-your-own-key AI agent — set it up, then test it in the
-        playground before it replies to customers in the inbox.
+        <T k="dashboard_agents_page.002" />
       </p>
 
       {decided && (

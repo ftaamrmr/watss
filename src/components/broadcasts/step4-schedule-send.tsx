@@ -195,11 +195,10 @@ export function Step4ScheduleSend({
             <DialogHeader>
               <DialogTitle className="text-popover-foreground"><T k="broadcasts_step4_schedule_send.007" /></DialogTitle>
               <DialogDescription className="text-muted-foreground">
-                You are about to send this broadcast to{' '}
-                <span className="font-medium text-popover-foreground">{estimatedReach.toLocaleString()}</span>{' '}
-                contacts using the{' '}
-                <span className="font-medium text-popover-foreground">{template.name}</span> template.
-                This action cannot be undone.
+                {t("broadcasts_step4_schedule_send.013", {
+                  reach: estimatedReach.toLocaleString(),
+                  template: template.name,
+                })}
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>

@@ -4,7 +4,7 @@ import type { Deal, PipelineStage } from "@/types";
 import { Calendar, Check, X } from "lucide-react";
 import { formatCurrency } from "@/lib/currency";
 
-import { T } from "@/i18n/provider";
+import { T, useT } from "@/i18n/provider";
 interface DealCardProps {
   deal: Deal;
   stage: PipelineStage | null;
@@ -27,7 +27,8 @@ function initials(name?: string, fallback?: string) {
 }
 
 export function DealCard({ deal, stage, onEdit, isOverlay }: DealCardProps) {
-  const contactLabel = deal.contact?.name || deal.contact?.phone || "No contact";
+  const { t } = useT();
+  const contactLabel = deal.contact?.name || deal.contact?.phone || t("pipelines_deal_card.002");
   const assigneeLabel = deal.assignee?.full_name || null;
 
   return (

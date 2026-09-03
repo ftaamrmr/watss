@@ -201,8 +201,7 @@ export function NodeConfigForm({
     case "end":
       return (
         <p className="text-xs text-muted-foreground">
-          Terminal node. When the runner reaches this node the run is marked
-          complete. No config needed.
+          <T k="flows_forms_node_config_form.055" />
         </p>
       );
   }

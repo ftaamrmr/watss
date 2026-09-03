@@ -133,7 +133,7 @@ export function EditorHeader() {
               disabled={activating || !canActivate}
               title={
                 !canActivate
-                  ? "Fix the issues below before activating"
+                  ? t("flows_header.009")
                   : undefined
               }
             >

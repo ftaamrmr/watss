@@ -74,7 +74,7 @@ export function ActivityFeed({ items, loading }: ActivityFeedProps) {
           <EmptyState
             icon={Inbox}
             title={t("dashboard_activity_feed.005")}
-            hint="Activity from messages, deals, broadcasts, and automations will appear here."
+            hint={t("dashboard_activity_feed.006")}
           />
         </div>
       ) : (

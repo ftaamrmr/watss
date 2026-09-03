@@ -148,7 +148,7 @@ export function defaultConfigFor(type: NodeType, t: (k: string) => string = (k) 
     case "send_list":
       return {
         text: "",
-        button_label: "View options",
+        button_label: t("flows_flow_editor_state.007"),
         sections: [
           {
             title: "",
@@ -385,10 +385,10 @@ export function FlowEditorProvider({
         setStateRaw((s) => ({ ...s, status: next }));
         toast.success(
           next === "active"
-            ? "Flow activated."
+            ? t("flows_flow_editor_state.008")
             : next === "archived"
-              ? "Archived."
-              : "Saved as draft.",
+              ? t("flows_flow_editor_state.009")
+              : t("flows_flow_editor_state.010"),
         );
       } catch (err) {
         const msg = err instanceof Error ? err.message: t("flows_flow_editor_state.003");

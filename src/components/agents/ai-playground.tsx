@@ -108,8 +108,7 @@ export function AiPlayground({ onGoToSetup }: { onGoToSetup?: () => void }) {
             <Bot className="mb-2 h-8 w-8 text-muted-foreground/60" />
             <p><T k="agents_ai_playground.002" /></p>
             <p className="mt-1 text-xs">
-              It uses your knowledge base and behaves exactly like the
-              auto-reply bot — including handoff.
+              <T k="agents_ai_playground.007" />
             </p>
             {onGoToSetup && (
               <Button

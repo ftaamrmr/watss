@@ -39,9 +39,7 @@ export function CustomFieldsManager({
         <DialogHeader>
           <DialogTitle className="text-popover-foreground"><T k="dashboard_contacts_page.008" /></DialogTitle>
           <DialogDescription className="text-muted-foreground">
-            Define extra contact fields (e.g. ZIP code, lead source). They
-            appear on every contact and in the “Update Contact Field” automation
-            action.
+            <T k="contacts_custom_fields_manager.010" />
           </DialogDescription>
         </DialogHeader>
         <CustomFieldsPanel />

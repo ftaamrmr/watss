@@ -28,7 +28,7 @@ export function PipelineDonut({ data, loading, currency }: PipelineDonutProps) {
           <Skeleton className="h-56 w-full" />) : data.stages.length === 0 ? (<EmptyState
             icon={GitBranch}
             title={t("dashboard_pipeline_donut.005")}
-            hint="Create deals in Pipelines to see stage breakdowns here."
+            hint={t("dashboard_pipeline_donut.007")}
           />
         ) : (
           <>
