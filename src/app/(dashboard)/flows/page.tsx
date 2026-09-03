@@ -55,12 +55,6 @@ interface FlowRow {
   updated_at: string;
 }
 
-const STATUS_LABELS: Record<FlowRow["status"], string> = {
-  draft: "Draft",
-  active: "Active",
-  archived: "Archived",
-};
-
 const STATUS_COLORS: Record<FlowRow["status"], string> = {
   draft: "border-border bg-muted text-muted-foreground",
   active: "border-emerald-600/40 bg-emerald-500/10 text-emerald-300",
@@ -117,7 +111,7 @@ export default function FlowsPage() {
       } catch (err) {
         if (!cancelled) {
           console.error(err);
-          toast.error("Couldn't load flows.");
+          toast.error(t("dashboard_flows_page.016"));
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -148,7 +142,7 @@ export default function FlowsPage() {
       router.push(`/flows/${json.flow.id}`);
     } catch (err) {
       console.error(err);
-      toast.error("Couldn't create flow.");
+      toast.error(t("dashboard_flows_page.017"));
     } finally {
       setCreating(false);
     }
@@ -179,7 +173,7 @@ export default function FlowsPage() {
 
   async function handleDelete(flow: FlowRow) {
     const yes = window.confirm(
-      `Delete "${flow.name}"? Any active runs will end immediately.`,
+      t("dashboard_flows_page.027", { name: flow.name }),
     );
     if (!yes) return;
     try {
@@ -189,7 +183,7 @@ export default function FlowsPage() {
       toast.success(t("dashboard_flows_page.012"));
     } catch (err) {
       console.error(err);
-      toast.error("Couldn't delete flow.");
+      toast.error(t("dashboard_flows_page.018"));
     }
   }
 
@@ -210,8 +204,7 @@ export default function FlowsPage() {
             <span className="inline-flex items-center rounded-full border border-amber-500/40 bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-300"><T k="dashboard_flows_page.003" /></span>
           </div>
           <p className="mt-1 text-sm text-muted-foreground">
-            Build branching, button-driven WhatsApp conversations. Useful for
-            menus, FAQs, and triage before a human steps in.
+            <T k="dashboard_flows_page.028" />
           </p>
         </div>
         <GatedButton
@@ -255,25 +248,34 @@ export default function FlowsPage() {
             <div className="space-y-3">
               <p className="text-xs uppercase tracking-wide text-muted-foreground"><T k="dashboard_flows_page.006" /></p>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {templates.map((t) => {
-                  const Icon = TEMPLATE_ICONS[t.icon] ?? FileText;
+                {templates.map((tmpl) => {
+                  const Icon = TEMPLATE_ICONS[tmpl.icon] ?? FileText;
+                  const tplKey =
+                    tmpl.slug === "welcome_menu" ||
+                    tmpl.slug === "faq_bot" ||
+                    tmpl.slug === "lead_capture"
+                      ? tmpl.slug
+                      : null;
                   return (
                     <button
-                      key={t.slug}
+                      key={tmpl.slug}
                       type="button"
-                      onClick={() => handleUseTemplate(t.slug)}
+                      onClick={() => handleUseTemplate(tmpl.slug)}
                       disabled={creating}
                       className="flex flex-col gap-2.5 rounded-lg border border-border bg-background p-4 text-left transition-colors hover:border-primary/40 hover:bg-muted disabled:opacity-50"
                     >
                       <Icon className="h-5 w-5 text-primary" />
                       <span className="text-sm font-semibold text-popover-foreground">
-                        {t.name}
+                        {tplKey ? t(`flows_templates.${tplKey}_name`) : tmpl.name}
                       </span>
                       <span className="text-xs leading-relaxed text-muted-foreground">
-                        {t.description}
+                        {tplKey ? t(`flows_templates.${tplKey}_desc`) : tmpl.description}
                       </span>
                       <span className="mt-auto border-t border-border pt-2 text-[11px] text-muted-foreground">
-                        {t.node_count} {t.node_count === 1 ? "node" : "nodes"}
+                        {tmpl.node_count}{" "}
+                        {tmpl.node_count === 1
+                          ? t("dashboard_flows_page.023")
+                          : t("dashboard_flows_page.024")}
                       </span>
                     </button>
                   );
@@ -303,7 +305,7 @@ export default function FlowsPage() {
             ><T k="dashboard_automations_page.009" /></Button>
             <Button onClick={handleCreate} disabled={!newName.trim() || creating}>
               {creating && <Loader2 className="h-4 w-4 animate-spin" />}
-              Create blank flow
+              {t("dashboard_flows_page.029")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -326,9 +328,7 @@ function EmptyState({
       </div>
       <h2 className="mt-4 text-base font-medium text-foreground"><T k="dashboard_flows_page.008" /></h2>
       <p className="mt-1 max-w-md text-sm text-muted-foreground">
-        Build your first conversation — a welcome menu, an order lookup, an FAQ
-        bot. Customers tap buttons; the bot routes them to the right answer (or
-        the right agent).
+        <T k="dashboard_flows_page.030" />
       </p>
       <GatedButton
         canAct={canCreate}
@@ -350,7 +350,8 @@ function FlowCard({
   onEdit: () => void;
   onDelete: () => void;
 }) {
-  const triggerSummary = describeTrigger(flow);
+  const { t } = useT();
+  const triggerSummary = describeTrigger(flow, t);
   const StatusIcon =
     flow.status === "active"
       ? PlayCircle
@@ -374,7 +375,11 @@ function FlowCard({
           )}
         >
           <StatusIcon className="h-3 w-3" />
-          {STATUS_LABELS[flow.status]}
+          {flow.status === "active"
+            ? t("dashboard_flows_page.014")
+            : flow.status === "archived"
+              ? t("dashboard_flows_page.015")
+              : t("dashboard_flows_page.013")}
         </Badge>
       </div>
 
@@ -385,7 +390,10 @@ function FlowCard({
       <div className="mt-4 flex items-center gap-3 text-[11px] text-muted-foreground">
         <span className="inline-flex items-center gap-1">
           <MessageSquare className="h-3 w-3" />
-          {flow.execution_count} {flow.execution_count === 1 ? "run" : "runs"}
+          {flow.execution_count}{" "}
+          {flow.execution_count === 1
+            ? t("dashboard_flows_page.025")
+            : t("dashboard_flows_page.026")}
         </span>
       </div>
 
@@ -404,16 +412,19 @@ function FlowCard({
   );
 }
 
-function describeTrigger(flow: FlowRow): string {
+function describeTrigger(
+  flow: FlowRow,
+  t: (key: string, vars?: Record<string, string | number>) => string,
+): string {
   if (flow.trigger_type === "keyword") {
     const keywords = Array.isArray(flow.trigger_config.keywords)
       ? (flow.trigger_config.keywords as string[])
       : [];
-    if (keywords.length === 0) return "Triggers on keyword (none set)";
-    return `Triggers on: ${keywords.join(", ")}`;
+    if (keywords.length === 0) return t("dashboard_flows_page.019");
+    return t("dashboard_flows_page.020", { keywords: keywords.join(", ") });
   }
   if (flow.trigger_type === "first_inbound_message") {
-    return "Triggers on a contact's first-ever inbound message";
+    return t("dashboard_flows_page.021");
   }
-  return "Manual trigger";
+  return t("dashboard_flows_page.022");
 }
