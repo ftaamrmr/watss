@@ -26,6 +26,7 @@ import {
 } from '@/lib/auth/account';
 import { generateApiKey } from '@/lib/api-keys/keys';
 import { normalizeScopes } from '@/lib/api-keys/scopes';
+import { assertQuota, PlanLimitError } from '@/lib/entitlements';
 import {
   checkRateLimit,
   rateLimitResponse,
@@ -122,6 +123,25 @@ export async function POST(request: Request) {
     }
 
     const { plaintext, hash, prefix } = generateApiKey();
+
+    // Plan enforcement (server-side): api_keys cap. A DB trigger is
+    // the backstop; this check returns the friendly 402 first.
+    try {
+      const { count } = await ctx.supabase
+        .from('api_keys')
+        .select('id', { count: 'exact', head: true })
+        .eq('account_id', ctx.accountId)
+        .is('revoked_at', null);
+      await assertQuota(ctx.accountId, 'api_keys', count ?? 0);
+    } catch (err) {
+      if (err instanceof PlanLimitError) {
+        return NextResponse.json(
+          { error: 'Plan limit reached', code: err.code, resource: err.resource, limit: err.limit },
+          { status: 402 },
+        );
+      }
+      throw err;
+    }
 
     const { data, error } = await ctx.supabase
       .from('api_keys')

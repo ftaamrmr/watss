@@ -109,6 +109,7 @@ export default function PipelinesPage() {
     [supabase],
   );
 
+  // eslint-disable-next-line react-hooks/preserve-manual-memoization -- stable i18n t dep; behaviour unchanged
   const seedDefaultPipeline = useCallback(async (): Promise<Pipeline | null> => {
     const {
       data: { session },
@@ -215,6 +216,7 @@ export default function PipelinesPage() {
   }, [loadDeals, selectedPipelineId]);
 
   const handleDealMoved = useCallback(
+    // eslint-disable-next-line react-hooks/preserve-manual-memoization -- stable i18n t dep; behaviour unchanged
     async (dealId: string, newStageId: string) => {
       // Optimistic update — board already animated; just persist.
       setDeals((prev) =>

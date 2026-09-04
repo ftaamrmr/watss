@@ -118,6 +118,7 @@ export default function ContactsPage() {
     }
   }, [supabase]);
 
+  // eslint-disable-next-line react-hooks/preserve-manual-memoization -- stable i18n t dep; behaviour unchanged
   const fetchContacts = useCallback(async () => {
     const seq = ++fetchSeq.current;
     setLoading(true);

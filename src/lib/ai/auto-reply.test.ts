@@ -22,6 +22,12 @@ vi.mock('./context', () => ({ buildConversationContext: h.buildConversationConte
 vi.mock('./knowledge', () => ({ retrieveKnowledge: h.retrieveKnowledge }))
 vi.mock('./generate', () => ({ generateReply: h.generateReply }))
 vi.mock('@/lib/flows/meta-send', () => ({ engineSendText: h.engineSendText }))
+// Usage metering is covered by its own unit tests — stub it so these
+// tests don't need a billing backend.
+vi.mock('@/lib/usage', () => ({
+  meterUsage: vi.fn(async () => {}),
+  trackUsage: vi.fn(async () => {}),
+}))
 vi.mock('./admin-client', () => ({
   supabaseAdmin: () => ({
     from: (table: string) => {

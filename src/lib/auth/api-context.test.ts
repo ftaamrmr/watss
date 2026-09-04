@@ -19,6 +19,22 @@ vi.mock("@/lib/api-keys/store", () => ({
   touchLastUsed: (id: string) => touchLastUsed(id),
 }));
 
+// SaaS metering/gating is covered by dedicated unit tests — stub it here
+// so these tests stay focused on API-key auth behaviour.
+vi.mock("@/lib/usage", () => ({
+  meterUsage: vi.fn(async () => {}),
+  trackUsage: vi.fn(async () => {}),
+}));
+vi.mock("@/lib/entitlements", async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import("@/lib/entitlements")>();
+  return {
+    ...actual,
+    assertWriteAccess: vi.fn(async () => {}),
+    assertQuota: vi.fn(async () => {}),
+  };
+});
+
 // Import AFTER the mocks are registered.
 const { requireApiKey } = await import("./api-context");
 

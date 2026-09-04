@@ -7,6 +7,7 @@ import { ThemedToaster } from "@/components/themed-toaster";
 import { I18nProvider } from "@/i18n/provider";
 import { dirOf } from "@/i18n/shared";
 import { getLocale } from "@/i18n/server";
+import { APP_NAME } from "@/lib/branding";
 import {
   DEFAULT_MODE,
   DEFAULT_THEME,
@@ -29,10 +30,11 @@ const arabic = IBM_Plex_Sans_Arabic({
 
 export const metadata: Metadata = {
   title: {
-    default: "wacrm",
-    template: "%s — wacrm",
+    default: APP_NAME,
+    template: `%s — ${APP_NAME}`,
   },
-  description: "Self-hostable CRM template for WhatsApp.",
+  description:
+    "WATSS — منصة عربية لإدارة مبيعات وخدمة عملاء واتساب. The Arabic-first WhatsApp CRM platform.",
   robots: {
     index: false,
     follow: false,

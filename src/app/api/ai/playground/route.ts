@@ -7,6 +7,8 @@ import { generateReply } from '@/lib/ai/generate'
 import { buildSystemPrompt } from '@/lib/ai/defaults'
 import { latestUserMessage } from '@/lib/ai/query'
 import { AiError, type ChatMessage } from '@/lib/ai/types'
+import { meterUsage } from '@/lib/usage'
+import { PlanLimitError } from '@/lib/entitlements'
 
 // Keep the tested transcript bounded, mirroring the live context window.
 const MAX_TURNS = 20
@@ -27,6 +29,19 @@ export async function POST(request: Request) {
 
     const limit = checkRateLimit(`ai-playground:${userId}`, RATE_LIMITS.aiDraft)
     if (!limit.success) return rateLimitResponse(limit)
+
+    // Plan quota: playground turns count as AI requests.
+    try {
+      await meterUsage(accountId, 'ai_requests')
+    } catch (err) {
+      if (err instanceof PlanLimitError) {
+        return NextResponse.json(
+          { error: 'Plan limit reached', code: err.code, resource: err.resource, limit: err.limit },
+          { status: 402 },
+        )
+      }
+      throw err
+    }
 
     const body = await request.json().catch(() => null)
     const rawMessages = Array.isArray(body?.messages) ? body.messages : null

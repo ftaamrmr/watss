@@ -8,6 +8,8 @@ import { generateReply } from '@/lib/ai/generate'
 import { buildSystemPrompt } from '@/lib/ai/defaults'
 import { latestUserMessage } from '@/lib/ai/query'
 import { AiError } from '@/lib/ai/types'
+import { meterUsage } from '@/lib/usage'
+import { PlanLimitError } from '@/lib/entitlements'
 
 /**
  * POST /api/ai/draft  (agent+)
@@ -39,6 +41,19 @@ export async function POST(request: Request) {
         { error: 'conversation_id is required' },
         { status: 400 },
       )
+    }
+
+    // Plan quota: monthly AI requests (atomic check+increment).
+    try {
+      await meterUsage(accountId, 'ai_requests')
+    } catch (err) {
+      if (err instanceof PlanLimitError) {
+        return NextResponse.json(
+          { error: 'Plan limit reached', code: err.code, resource: err.resource, limit: err.limit },
+          { status: 402 },
+        )
+      }
+      throw err
     }
 
     // RLS scopes the SSR client to the caller's account, so a missing

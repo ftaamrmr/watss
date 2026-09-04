@@ -165,6 +165,7 @@ export default function JoinPage() {
     };
   }, [token]);
 
+  // eslint-disable-next-line react-hooks/preserve-manual-memoization -- stable i18n t dep; behaviour unchanged
   const handleAccept = useCallback(async () => {
     if (!token) return;
     setAccepting(true);
@@ -204,6 +205,7 @@ export default function JoinPage() {
     }
   }, [token]);
 
+  // eslint-disable-next-line react-hooks/preserve-manual-memoization -- stable i18n t dep; behaviour unchanged
   const handleSignOutAndRetry = useCallback(async () => {
     setSigningOut(true);
     try {

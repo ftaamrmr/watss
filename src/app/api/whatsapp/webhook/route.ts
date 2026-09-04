@@ -6,6 +6,8 @@ import { normalizePhone } from '@/lib/whatsapp/phone-utils'
 import { findExistingContact, isUniqueViolation } from '@/lib/contacts/dedupe'
 import { verifyMetaWebhookSignature } from '@/lib/whatsapp/webhook-signature'
 import { runAutomationsForTrigger } from '@/lib/automations/engine'
+import { trackUsage } from '@/lib/usage'
+import { canWrite, getEntitlements } from '@/lib/entitlements'
 import { dispatchInboundToFlows } from '@/lib/flows/engine'
 import { dispatchInboundToAiReply } from '@/lib/ai/auto-reply'
 import { dispatchWebhookEvent } from '@/lib/webhooks/deliver'
@@ -706,6 +708,18 @@ async function processMessage(
   // so the broadcast's `replied_count` advances (via the aggregate
   // trigger installed in migration 003).
   await flagBroadcastReplyIfAny(accountId, contactRecord.id)
+
+  // SaaS accounting: every inbound message counts toward the account's
+  // monthly usage (best-effort, never blocks the webhook ack).
+  trackUsage(accountId, 'messages')
+
+  // SaaS gating: an expired/suspended subscription keeps RECEIVING and
+  // storing messages (no data loss) but bots, flows, automations and AI
+  // replies stop until the workspace resubscribes.
+  const entitlements = await getEntitlements(accountId).catch(() => null)
+  if (entitlements && !canWrite(entitlements)) {
+    return
+  }
 
   // ============================================================
   // Flow runner dispatch.

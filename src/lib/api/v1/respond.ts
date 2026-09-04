@@ -21,6 +21,8 @@ export type ApiErrorCode =
   | 'unauthorized' // missing / malformed / unknown / revoked / expired key
   | 'forbidden' // valid key, but missing the required scope
   | 'rate_limited' // per-key budget exhausted
+  | 'quota_exceeded' // monthly subscription quota exhausted (upgrade)
+  | 'subscription_inactive' // trial expired / suspended — writes blocked
   | 'bad_request' // malformed input
   | 'not_found'
   | 'internal';
@@ -63,6 +65,24 @@ export function forbidden(message: string): ApiError {
 /** 400 — bad input. */
 export function badRequest(message: string): ApiError {
   return new ApiError('bad_request', message, 400);
+}
+
+/** 402 — plan quota reached; the client should prompt an upgrade. */
+export function quotaExceeded(resource: string, limit: number): ApiError {
+  return new ApiError(
+    'quota_exceeded',
+    `Monthly plan limit reached for ${resource} (${limit}). Upgrade to increase the allowance.`,
+    402
+  );
+}
+
+/** 402 — subscription not usable for writes (expired/suspended). */
+export function subscriptionInactive(status: string): ApiError {
+  return new ApiError(
+    'subscription_inactive',
+    `Subscription is ${status}. Choose a plan to continue.`,
+    402
+  );
 }
 
 /** 429 — built from a `checkRateLimit` miss, with the standard headers. */

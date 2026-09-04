@@ -6,6 +6,8 @@ import { generateReply } from './generate'
 import { buildSystemPrompt } from './defaults'
 import { latestUserMessage } from './query'
 import { engineSendText } from '@/lib/flows/meta-send'
+import { meterUsage } from '@/lib/usage'
+import { PlanLimitError } from '@/lib/entitlements'
 
 interface DispatchArgs {
   /** Tenancy key — drives config, contact, and whatsapp_config lookups. */
@@ -78,6 +80,15 @@ export async function dispatchInboundToAiReply(
 
     const messages = await buildConversationContext(db, conversationId)
     if (messages.length === 0) return
+
+    // Plan quota: monthly AI requests. Over quota → stand down silently
+    // (the conversation still lands in the inbox for a human).
+    try {
+      await meterUsage(accountId, 'ai_requests', 1, db)
+    } catch (err) {
+      if (err instanceof PlanLimitError) return
+      throw err
+    }
 
     // Ground the reply in the account's knowledge base (best-effort).
     const knowledge = await retrieveKnowledge(

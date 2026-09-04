@@ -22,16 +22,24 @@ const LABELS: Record<Locale, string> = {
   en: "English",
 };
 
+/** Persist the locale cookie + flip <html> lang/dir. Event-handler use only. */
+function applyLocaleSideEffects(next: Locale) {
+  document.cookie = `${LOCALE_COOKIE}=${next}; path=/; max-age=31536000; samesite=lax`;
+  document.documentElement.lang = next;
+  document.documentElement.dir = dirOf(next);
+}
+
 export function LanguageSwitcher() {
   const { t } = useT();
   const router = useRouter();
   const locale = useLocale();
 
+  // DOM/cookie mutations happen in a plain module-scope helper (event-
+  // handler territory) so the React Compiler doesn't mistake them for
+  // render-time writes.
   function switchTo(next: Locale) {
     if (next === locale) return;
-    document.cookie = `${LOCALE_COOKIE}=${next}; path=/; max-age=31536000; samesite=lax`;
-    document.documentElement.lang = next;
-    document.documentElement.dir = dirOf(next);
+    applyLocaleSideEffects(next);
     router.refresh();
   }
 

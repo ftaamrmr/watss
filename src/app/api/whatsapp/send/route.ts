@@ -10,6 +10,12 @@ import {
   validateSendMessageParams,
   SendMessageError,
 } from '@/lib/whatsapp/send-message'
+import { meterUsage } from '@/lib/usage'
+import {
+  assertWriteAccess,
+  PlanLimitError,
+  SubscriptionInactiveError,
+} from '@/lib/entitlements'
 
 // The dashboard's outbound-send endpoint. It owns auth, per-user rate
 // limiting, and the two ways the UI targets a thread — an existing
@@ -101,6 +107,30 @@ export async function POST(request: Request) {
     } catch (err) {
       if (err instanceof SendMessageError) {
         return NextResponse.json({ error: err.message }, { status: err.status })
+      }
+      throw err
+    }
+
+    // SaaS gating: subscription must allow writes (trialing/active/
+    // past_due grace), and the monthly message quota is enforced
+    // atomically. Data reads are never blocked — only new outbound
+    // activity. Runs after input validation so malformed payloads
+    // still 400 deterministically.
+    try {
+      await assertWriteAccess(accountId)
+      await meterUsage(accountId, 'messages')
+    } catch (err) {
+      if (err instanceof SubscriptionInactiveError) {
+        return NextResponse.json(
+          { error: 'Subscription inactive', code: err.code, status: err.status },
+          { status: 402 },
+        )
+      }
+      if (err instanceof PlanLimitError) {
+        return NextResponse.json(
+          { error: 'Plan limit reached', code: err.code, resource: err.resource, limit: err.limit },
+          { status: 402 },
+        )
       }
       throw err
     }

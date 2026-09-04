@@ -152,6 +152,22 @@ vi.mock('@/lib/whatsapp/meta-api', () => ({
   sendMediaMessage: vi.fn(),
 }))
 
+// SaaS gating is exercised in the entitlement/usage unit tests — here we
+// stub it out so these tests stay focused on send-route behaviour with a
+// mocked Supabase client that has no billing RPCs.
+vi.mock('@/lib/usage', () => ({
+  meterUsage: vi.fn(async () => {}),
+  trackUsage: vi.fn(async () => {}),
+}))
+vi.mock('@/lib/entitlements', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/lib/entitlements')>()
+  return {
+    ...actual,
+    assertWriteAccess: vi.fn(async () => {}),
+    assertQuota: vi.fn(async () => {}),
+  }
+})
+
 import { POST } from './route'
 
 function postContactTemplate(overrides: Record<string, unknown> = {}) {

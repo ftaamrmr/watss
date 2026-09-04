@@ -228,7 +228,7 @@ export function AiConfig() {
     <div>
       <SettingsPanelHead
         title={t("settings_ai_config.014")}
-        description="Bring your own OpenAI or Anthropic key. wacrm calls the provider directly with your key — no per-seat AI fees, and your data stays yours. This powers AI-drafted replies in the inbox, the auto-reply bot, and the Playground."
+        description="Bring your own OpenAI or Anthropic key. The platform calls the provider directly with your key — no per-seat AI fees, and your data stays yours. This powers AI-drafted replies in the inbox, the auto-reply bot, and the Playground."
       />
 
       {!canEdit && (

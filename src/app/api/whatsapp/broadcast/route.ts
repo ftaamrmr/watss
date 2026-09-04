@@ -4,6 +4,12 @@ import { sendTemplateMessage } from '@/lib/whatsapp/meta-api'
 import { decrypt } from '@/lib/whatsapp/encryption'
 import type { SendTimeParams } from '@/lib/whatsapp/template-send-builder'
 import { isMessageTemplate } from '@/lib/whatsapp/template-row-guard'
+import { meterUsage } from '@/lib/usage'
+import {
+  assertWriteAccess,
+  PlanLimitError,
+  SubscriptionInactiveError,
+} from '@/lib/entitlements'
 import {
   sanitizePhoneForMeta,
   isValidE164,
@@ -96,6 +102,21 @@ export async function POST(request: Request) {
       )
     }
 
+    // SaaS gating: writes require a usable subscription; each broadcast
+    // launch counts once against broadcasts_per_month, and each intended
+    // recipient counts against monthly_messages (atomic, race-safe).
+    try {
+      await assertWriteAccess(accountId)
+    } catch (err) {
+      if (err instanceof SubscriptionInactiveError) {
+        return NextResponse.json(
+          { error: 'Subscription inactive', code: err.code, status: err.status },
+          { status: 402 },
+        )
+      }
+      throw err
+    }
+
     const body = await request.json()
     const {
       recipients: newRecipients,
@@ -132,6 +153,20 @@ export async function POST(request: Request) {
         { error: 'template_name is required' },
         { status: 400 }
       )
+    }
+
+    // Quota: one broadcast + N message credits, before any send starts.
+    try {
+      await meterUsage(accountId, 'broadcasts')
+      await meterUsage(accountId, 'messages', recipients.length)
+    } catch (err) {
+      if (err instanceof PlanLimitError) {
+        return NextResponse.json(
+          { error: 'Plan limit reached', code: err.code, resource: err.resource, limit: err.limit },
+          { status: 402 },
+        )
+      }
+      throw err
     }
 
     const { data: config, error: configError } = await supabase

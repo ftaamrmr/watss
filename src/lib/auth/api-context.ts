@@ -33,8 +33,14 @@ import { supabaseAdmin } from '@/lib/flows/admin-client';
 import { findActiveKeyByHash, touchLastUsed } from '@/lib/api-keys/store';
 import { hashApiKey, looksLikeApiKey } from '@/lib/api-keys/keys';
 import { hasScope, type ApiScope } from '@/lib/api-keys/scopes';
-import { forbidden, rateLimited, unauthorized } from '@/lib/api/v1/respond';
+import { forbidden, quotaExceeded, rateLimited, subscriptionInactive, unauthorized } from '@/lib/api/v1/respond';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { meterUsage } from '@/lib/usage';
+import {
+  assertWriteAccess,
+  PlanLimitError,
+  SubscriptionInactiveError,
+} from '@/lib/entitlements';
 
 export interface ApiKeyContext {
   /** Discriminant — lets shared logic tell key auth from cookie auth. */
@@ -103,6 +109,21 @@ export async function requireApiKey(
 
   if (scope && !hasScope(row.scopes, scope)) {
     throw forbidden(`This API key is missing the '${scope}' scope`);
+  }
+
+  // SaaS metering: every authenticated API call counts against the
+  // account's monthly api_requests quota (atomic, race-safe). Write
+  // scopes additionally require a usable subscription — reads stay
+  // open even past trial expiry (no data hostage-taking).
+  try {
+    await meterUsage(row.account_id, 'api_requests');
+    if (scope && !scope.endsWith(':read')) {
+      await assertWriteAccess(row.account_id);
+    }
+  } catch (err) {
+    if (err instanceof PlanLimitError) throw quotaExceeded(err.resource, err.limit);
+    if (err instanceof SubscriptionInactiveError) throw subscriptionInactive(err.status);
+    throw err;
   }
 
   touchLastUsed(row.id);

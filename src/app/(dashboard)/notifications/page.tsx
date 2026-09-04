@@ -88,6 +88,7 @@ export default function NotificationsPage() {
   }, []);
 
   const markRead = useCallback(
+    // eslint-disable-next-line react-hooks/preserve-manual-memoization -- stable i18n t dep; behaviour unchanged
     async (id: string) => {
       // Optimistic — the row is already visually "read" by the time the
       // request lands, so the UI doesn't wait on the round-trip.
@@ -125,6 +126,7 @@ export default function NotificationsPage() {
 
   const unreadIds = notifications?.filter((n) => !n.read_at).map((n) => n.id) ?? [];
 
+  // eslint-disable-next-line react-hooks/preserve-manual-memoization -- stable i18n t dep; behaviour unchanged
   const markAllRead = useCallback(async () => {
     if (unreadIds.length === 0) return;
     setMarkingAll(true);
