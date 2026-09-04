@@ -72,14 +72,6 @@ ALTER TABLE accounts
   ADD COLUMN IF NOT EXISTS preferred_language TEXT NOT NULL DEFAULT 'ar'
     CHECK (preferred_language IN ('ar','en'));
 
--- 7. ACCOUNT EXTENSIONS (workspace profile)
--- ============================================================
-ALTER TABLE accounts
-  ADD COLUMN IF NOT EXISTS country TEXT,
-  ADD COLUMN IF NOT EXISTS timezone TEXT NOT NULL DEFAULT 'Asia/Riyadh',
-  ADD COLUMN IF NOT EXISTS preferred_language TEXT NOT NULL DEFAULT 'ar'
-    CHECK (preferred_language IN ('ar','en'));
-
 -- 8. ENTITLEMENTS + QUOTA RPCs
 -- ============================================================
 
